@@ -8,9 +8,9 @@ namespace QuizTools.GeneralUtils
 {
     public static class CollectionsUtils
     {
-        public static string ToSeperateString<T>(this ICollection<T> values, string seperator = null)
+        public static string ToSeperateString<T>(this IEnumerable<T> values, string seperator = null)
         {
-            if (values == null || values.Count == 0)
+            if (values == null || values.Count() == 0)
                 return string.Empty;
 
             if (seperator == null)
@@ -26,19 +26,19 @@ namespace QuizTools.GeneralUtils
             sb.Remove(sb.Length - seperator.Length, seperator.Length);
             return sb.ToString();
         }
-        public static int[] IndexesOf<T>(this ICollection<T> values, Func<T, bool> func)
+        public static int[] IndexesOf<T>(this IEnumerable<T> values, Func<T, bool> func)
         {
             List<int> list = new List<int>();
-            for (int i = 0; i < values.Count; i++)
+            for (int i = 0; i < values.Count(); i++)
             {
                 if (func(values.ElementAt(i)))
                     list.Add(i);
             }
             return list.ToArray();
         }
-        public static int IndexOf<T>(this ICollection<T> values, Func<T, bool> func)
+        public static int IndexOf<T>(this IEnumerable<T> values, Func<T, bool> func)
         {
-            for (int i = 0; i < values.Count; i++)
+            for (int i = 0; i < values.Count(); i++)
             {
                 if (func(values.ElementAt(i)))
                     return i;

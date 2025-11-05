@@ -17,9 +17,11 @@ namespace QuizTools
 
             new Category("Kahoot").AddOption("Get Info", "Shows information about kahoot", Kahoot.Kahoot.GetGamenfo)
                 .AddOption("Get Answers", "Shows answers to kahoot", Kahoot.Kahoot.GetAnswers)
-                .AddOption("Solve Kahoot", "Solves kahoot instead of you", Kahoot.Kahoot.SolveKahoot)
+                .AddOption("Solve Kahoot", "Solves test on Kahoot", Kahoot.Kahoot.SolveKahoot)
                 .AddOption("Spam With bots", "Spams with bots", Kahoot.Kahoot.SpamWithBots)
                 .AddOption("Brute Force", "Brute forces pins for kahoot", Kahoot.Kahoot.BruteForceKahoots);
+
+            new Category("Vseosvita").AddOption("Solve Test", "Solves test on Vseosvita", Vseosvita.Vseosvita.SolveTest);
 
             new Category("Settings").AddOption(new DelayOption("Change Answers Delay", "Delay before answering correct ({0}-{1}ms)", Settings.Current.ChangeDelay))
                 .AddOption(new BrowserOption("Change Browser", "Used broswer: {0}", Settings.Current.ChangeBrowser))
