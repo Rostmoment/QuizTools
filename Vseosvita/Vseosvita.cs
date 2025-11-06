@@ -8,6 +8,10 @@ namespace QuizTools.Vseosvita
 {
     class Vseosvita
     {
+        public static void SpamWithBots()
+        {
+
+        }
         public static void SolveTest()
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -15,7 +19,13 @@ namespace QuizTools.Vseosvita
             Console.ResetColor();
             Console.Write("➤ ");
             string id = Console.ReadLine();
-            new VseosvitaUser("VseosvitaUser").JoinTest(id);
+            VseosvitaUser user = new VseosvitaUser("123", id);
+            if (user.JoinTest())
+            {
+                Console.WriteLine($"Joined test successfully with ID {user.ID}!\nPress enter to start test");
+                Console.ReadLine();
+                user.StartTest();
+            }
         }
     }
 }

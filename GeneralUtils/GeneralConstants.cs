@@ -11,6 +11,6 @@ namespace QuizTools.GeneralUtils
         public const string GUID = "QuizTools";
         public const string NAME = "Quiz Tools By Rost";
         public const string VERSION = "1.0.0";
-        public const string INVISIBLE_SYMBOL = "​";
+        public const char ZERO_WIDTH_SPACE = '​';
     }
 }

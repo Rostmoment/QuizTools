@@ -1,10 +1,9 @@
-﻿using OpenQA.Selenium.DevTools;
-using QuizTools.GeneralUtils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace QuizTools.Vseosvita
@@ -14,9 +13,12 @@ namespace QuizTools.Vseosvita
         private readonly HttpClient Client;
         private readonly CookieContainer Cookies;
         public string Name { get; }
-        public string CurrentTestID { get; private set; }
+        public string TestID { get; }
+        public string UserKey { get; private set; } = "";
+        public bool IsJoined { get; private set; } = false;
+        public int ID { get; private set; } = -1;
 
-        public VseosvitaUser(string name)
+        public VseosvitaUser(string name, string test)
         {
             Cookies = new CookieContainer();
             HttpClientHandler handler = new HttpClientHandler
@@ -47,20 +49,20 @@ namespace QuizTools.Vseosvita
             Client.DefaultRequestHeaders.Add("upgrade-insecure-requests", "1");
 
             Name = name;
-            CurrentTestID = "";
+            TestID = test;
         }
-        public void JoinTest(string testID) => JoinTestAsync(testID).GetAwaiter().GetResult();
-        public async Task<bool> JoinTestAsync(string testID)
+        public bool JoinTest() => JoinTestAsync().GetAwaiter().GetResult();
+        public async Task<bool> JoinTestAsync()
         {
             try
             {
                 // 1. Creating session with cookies for the test
-                Uri startUri = new Uri(string.Format(VseosvitaConstants.CREATE_SESSION_FOR_TEST_URL, testID));
+                Uri startUri = new Uri(string.Format(VseosvitaConstants.CREATE_SESSION_FOR_TEST_URL, TestID));
                 HttpResponseMessage startResponse = await Client.GetAsync(startUri);
                 startResponse.EnsureSuccessStatusCode();
 
                 // 2. Getting test settings page
-                Uri settingsUri = new Uri(string.Format(VseosvitaConstants.START_TEST_URL, testID));
+                Uri settingsUri = new Uri(string.Format(VseosvitaConstants.JOIN_TEST_URL, TestID));
                 HttpResponseMessage settingsResponse = await Client.GetAsync(settingsUri);;
                 settingsResponse.EnsureSuccessStatusCode();
 
@@ -88,38 +90,29 @@ namespace QuizTools.Vseosvita
                 string oplContent = await oplResponse.Content.ReadAsStringAsync();
 
                 // 5. # Extract user_key from OPL page
-                string userKey = ExtractUserKey(oplContent);
-                if (string.IsNullOrEmpty(userKey))
+                UserKey = ExtractUserKey(oplContent);
+                if (string.IsNullOrEmpty(UserKey))
                 {
                     Logger.WriteErrorLine("Failed to extract user_key");
                     return false;
                 }
 
-                Logger.WriteInfoLine($"User Key: {userKey}");
+                Logger.WriteInfoLine($"User Key: {UserKey}");
 
                 // 6. Joining to test (for some reason it's named active screen)
 
-                Uri activeScreenUri = new Uri(string.Format(VseosvitaConstants.ACTIVE_SCREEN_DATA_URL, userKey));
+                Uri activeScreenUri = new Uri(string.Format(VseosvitaConstants.ACTIVE_SCREEN_DATA_URL, UserKey));
                 HttpRequestMessage activeScreenRequest = new HttpRequestMessage(HttpMethod.Post, activeScreenUri);
                 activeScreenRequest.Headers.Referrer = oplUri;
+                activeScreenRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
                 activeScreenRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
 
                 HttpResponseMessage activeScreenResponse = await Client.SendAsync(activeScreenRequest);
                 activeScreenResponse.EnsureSuccessStatusCode();
 
-                // 7. Starting test
-                /*
-                Uri startExecutionUri = new Uri($"https://vseosvita.ua/ext/test-designer/testing-pupil/start-execution?isAjax=1&isAjaxUrl={WebUtility.UrlEncode("https://vseosvita.ua/test/go-olp")}&user_key={userKey}");
-                HttpRequestMessage startExecutionRequest = new HttpRequestMessage(HttpMethod.Post, startExecutionUri);
-                startExecutionRequest.Headers.Referrer = oplUri;
-                startExecutionRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+                ID = JsonDocument.Parse(activeScreenResponse.Content.ReadAsStringAsync().Result).RootElement.GetProperty("staticData").GetProperty("id_execution").GetInt32();
 
-                var startExecutionResponse = await Client.SendAsync(startExecutionRequest);
-                Logger.WriteInfoLine($"Step 6 - Start execution: {startExecutionResponse.StatusCode}");
-
-                Logger.WriteInfoLine(startExecutionResponse.Content.ReadAsStringAsync().Result);
-                */
-                CurrentTestID = testID;
+                IsJoined = true;
                 return true;
             }
             catch (Exception ex)
@@ -127,6 +120,23 @@ namespace QuizTools.Vseosvita
                 Logger.WriteErrorLine($"Error joining to test: {ex.Message}");
                 return false;
             }
+        }
+
+        public void StartTest() => StartTestAsync().GetAwaiter().GetResult();
+        public async Task StartTestAsync()
+        {
+            if (!IsJoined)
+                throw new InvalidOperationException("User is not joined to the test");
+
+            Uri startExecutionUri = new Uri(string.Format(VseosvitaConstants.START_EXECUTION_URL, UserKey));
+            HttpRequestMessage startExecutionRequest = new HttpRequestMessage(HttpMethod.Post, startExecutionUri);
+            startExecutionRequest.Headers.Referrer = new Uri(VseosvitaConstants.GO_OPL_URL);
+            startExecutionRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            startExecutionRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+
+            HttpResponseMessage startExecutionResponse = await Client.SendAsync(startExecutionRequest);
+
+            Logger.WriteInfoLine(startExecutionResponse.Content.ReadAsStringAsync().Result);
         }
 
         private string ExtractUserKey(string content)

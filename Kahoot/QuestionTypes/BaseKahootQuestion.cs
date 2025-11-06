@@ -1,5 +1,4 @@
-﻿using QuizTools.Kahoot;
-using QuizTools.GeneralUtils;
+﻿using QuizTools.GeneralUtils;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;

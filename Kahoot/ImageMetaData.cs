@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace QuizTools
+namespace QuizTools.Kahoot
 {
     class ImageMetaData(string id, int width, int height, string contentType )
     {

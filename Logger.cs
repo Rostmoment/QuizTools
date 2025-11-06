@@ -1,10 +1,11 @@
-﻿using System;
+﻿using QuizTools.GeneralUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuizTools.GeneralUtils
+namespace QuizTools
 {
     public static class Logger
     {

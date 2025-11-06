@@ -3,7 +3,6 @@ using OpenQA.Selenium.Chrome;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using QuizTools.GeneralUtils;
 using QuizTools.Kahoot.Exceptions;
 using QuizTools.Kahoot.Games;
 using QuizTools.Kahoot.QuestionTypes;
