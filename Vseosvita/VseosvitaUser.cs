@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizTools.Vseosvita.QuestionTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -90,6 +91,7 @@ namespace QuizTools.Vseosvita
                 string oplContent = await oplResponse.Content.ReadAsStringAsync();
 
                 // 5. # Extract user_key from OPL page
+                File.WriteAllText("File.html", oplContent);
                 UserKey = ExtractUserKey(oplContent);
                 if (string.IsNullOrEmpty(UserKey))
                 {
@@ -97,7 +99,6 @@ namespace QuizTools.Vseosvita
                     return false;
                 }
 
-                Logger.WriteInfoLine($"User Key: {UserKey}");
 
                 // 6. Joining to test (for some reason it's named active screen)
 
@@ -111,6 +112,8 @@ namespace QuizTools.Vseosvita
                 activeScreenResponse.EnsureSuccessStatusCode();
 
                 ID = JsonDocument.Parse(activeScreenResponse.Content.ReadAsStringAsync().Result).RootElement.GetProperty("staticData").GetProperty("id_execution").GetInt32();
+
+                Logger.WriteWarningLine(activeScreenResponse.Content.ReadAsStringAsync().Result);
 
                 IsJoined = true;
                 return true;
@@ -137,6 +140,24 @@ namespace QuizTools.Vseosvita
             HttpResponseMessage startExecutionResponse = await Client.SendAsync(startExecutionRequest);
 
             Logger.WriteInfoLine(startExecutionResponse.Content.ReadAsStringAsync().Result);
+        }
+
+        public VseosvitaEndTestInformation EndTest() => EndTestAsync().GetAwaiter().GetResult();
+        public async Task<VseosvitaEndTestInformation> EndTestAsync()
+        {
+            if (!IsJoined)
+                throw new InvalidOperationException("User is not joined to the test");
+
+            Uri endTestUri = new Uri(string.Format(VseosvitaConstants.END_TEST_URL, UserKey));
+            HttpRequestMessage endTestRequest = new HttpRequestMessage(HttpMethod.Post, endTestUri);
+            endTestRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            endTestRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            endTestRequest.Headers.Referrer = new Uri(VseosvitaConstants.GO_OPL_URL);
+
+            HttpResponseMessage endTestResponse = await Client.SendAsync(endTestRequest);
+            string endTestContent = await endTestResponse.Content.ReadAsStringAsync();
+
+            return new VseosvitaEndTestInformation(JsonDocument.Parse(endTestContent).RootElement);
         }
 
         private string ExtractUserKey(string content)
