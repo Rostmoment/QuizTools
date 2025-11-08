@@ -29,7 +29,7 @@ namespace QuizTools.Kahoot.QuestionTypes
             PointsMultiplier = jSON.GetInt32OrDefault("pointsMultiplier", 1);
             JSON = jSON;
         }
-        public QuestionType Type { get; }
+        public KahootQuestionType Type { get; }
         public string Title { get; }
         public ImageMetaData Image { get; }
 
@@ -76,30 +76,30 @@ namespace QuizTools.Kahoot.QuestionTypes
                 string type = current.GetProperty("type").GetString();
                 switch (type.ToQuestionType())
                 {
-                    case QuestionType.Unknown:
+                    case KahootQuestionType.Unknown:
                         Logger.WriteWarningLine($"Unknown type {type}");
                         result.Add(new KahootUnknownQuestion(current));
                         continue;
-                    case QuestionType.Quiz or QuestionType.MultipleAnswersQuiz
-                    or QuestionType.Poll or QuestionType.MultipleAnswersPoll:
+                    case KahootQuestionType.Quiz or KahootQuestionType.MultipleAnswersQuiz
+                    or KahootQuestionType.Poll or KahootQuestionType.MultipleAnswersPoll:
                         result.Add(new KahootChoicesQuestion(current));
                         break;
-                    case QuestionType.OpenEnded or QuestionType.Feedback:
+                    case KahootQuestionType.OpenEnded or KahootQuestionType.Feedback:
                         result.Add(new KahootTypeQuestion(current));
                         break;
-                    case QuestionType.Slider:
+                    case KahootQuestionType.Slider:
                         result.Add(new KahootSliderQuestion(current));
                         break;
-                    case QuestionType.Title or QuestionType.Content:
+                    case KahootQuestionType.Title or KahootQuestionType.Content:
                         result.Add(new KahootUnknownQuestion(current));
                         break;
-                    case QuestionType.PinIt or QuestionType.DropPin:
+                    case KahootQuestionType.PinIt or KahootQuestionType.DropPin:
                         result.Add(new KahootPinQuestion(current));
                         break;
-                    case QuestionType.NPS or QuestionType.Scale:
+                    case KahootQuestionType.NPS or KahootQuestionType.Scale:
                         result.Add(new KahootScaleQuestion(current));
                         break;
-                    case QuestionType.Jumble:
+                    case KahootQuestionType.Jumble:
                         result.Add(new KahootJumbleQuestion(current));
                         break;
                     default:

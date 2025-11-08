@@ -14,7 +14,7 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootScaleQuestion : BaseKahootQuestion
     {
-        public bool IsNPS => base.Type == QuestionType.NPS;
+        public bool IsNPS => base.Type == KahootQuestionType.NPS;
         public int AnswersCount => MaxValue - MinValue + 1;
         public int MinValue { get; }
         public int MaxValue { get; }

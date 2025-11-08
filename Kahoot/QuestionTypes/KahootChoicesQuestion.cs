@@ -18,8 +18,8 @@ namespace QuizTools.Kahoot.QuestionTypes
                 return base.MaxPoints;
             }
         }
-        public bool IsMultipleAnswers => Type == QuestionType.MultipleAnswersQuiz || Type == QuestionType.MultipleAnswersPoll;
-        public bool IsPoll => Type == QuestionType.Poll || Type == QuestionType.MultipleAnswersPoll;
+        public bool IsMultipleAnswers => Type == KahootQuestionType.MultipleAnswersQuiz || Type == KahootQuestionType.MultipleAnswersPoll;
+        public bool IsPoll => Type == KahootQuestionType.Poll || Type == KahootQuestionType.MultipleAnswersPoll;
         private List<KahootChoice> choices = new List<KahootChoice>();
         public KahootChoice[] Choices { get; private set; }
 

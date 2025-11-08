@@ -35,13 +35,13 @@ namespace QuizTools.Kahoot.QuestionTypes
                 return (Y + Height / 2) / Image.Height * 100;
             }
         }
-        public bool IsDropPin => Type == QuestionType.DropPin;
+        public bool IsDropPin => Type == KahootQuestionType.DropPin;
 
         public KahootPinQuestion(JsonElement jSON) : base(jSON)
         {
             JsonElement pinData;
 
-            if (Type == QuestionType.PinIt)
+            if (Type == KahootQuestionType.PinIt)
             {
                 pinData = jSON.GetProperty("choiceShapes").EnumerateArray().First();
                 X = pinData.GetDoubleOrDefault("x");
@@ -60,7 +60,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public override void WriteAnswers()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            if (Type == QuestionType.PinIt)
+            if (Type == KahootQuestionType.PinIt)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($" - Correct answer at X={X}, Y={Y}. Width={Width}, Height={Height}");
