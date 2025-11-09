@@ -17,5 +17,6 @@ namespace QuizTools.Vseosvita
         public const string ACTIVE_SCREEN_DATA_URL = "https://vseosvita.ua/ext/test-designer/testing-pupil/active-screen-data?isAjax=1&isAjaxUrl=https%3A%2F%2Fvseosvita.ua%2Ftest%2Fgo-olp&user_key={0}";
         public const string START_EXECUTION_URL = "https://vseosvita.ua/ext/test-designer/testing-pupil/start-execution?isAjaxUrl=https%3A%2F%2Fvseosvita.ua%2Ftest%2Fgo-olp&user_key={0}";
         public const string END_TEST_URL = "https://vseosvita.ua/ext/test-designer/testing-pupil/finish-test?isAjax=1&isAjaxUrl=https%3A%2F%2Fvseosvita.ua%2Ftest%2Fgo-olp&user_key={0}";
+        public const string ANSWER_QUESTION_URL = "https://vseosvita.ua/ext/test-designer/testing-pupil/save-user-answer?isAjax=1&isAjaxUrl=https%3A%2F%2Fvseosvita.ua%2Ftest%2Fgo-olp&user_key={0}";
     }
 }

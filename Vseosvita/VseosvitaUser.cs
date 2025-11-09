@@ -11,12 +11,13 @@ namespace QuizTools.Vseosvita
 {
     class VseosvitaUser
     {
-        private readonly HttpClient Client;
-        private readonly CookieContainer Cookies;
+        public HttpClient Client { get; }
+        public CookieContainer Cookies { get; }
         public string Name { get; }
         public string TestID { get; }
         public string UserKey { get; private set; } = "";
         public bool IsJoined { get; private set; } = false;
+        public bool StartedTest { get; private set; } = false;
         public int ID { get; private set; } = -1;
 
         public VseosvitaUser(string name, string test)
@@ -29,7 +30,6 @@ namespace QuizTools.Vseosvita
                 AllowAutoRedirect = true,
                 UseDefaultCredentials = false
             };
-
             Client = new HttpClient(handler); 
 
             Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
@@ -113,8 +113,6 @@ namespace QuizTools.Vseosvita
 
                 ID = JsonDocument.Parse(activeScreenResponse.Content.ReadAsStringAsync().Result).RootElement.GetProperty("staticData").GetProperty("id_execution").GetInt32();
 
-                Logger.WriteWarningLine(activeScreenResponse.Content.ReadAsStringAsync().Result);
-
                 IsJoined = true;
                 return true;
             }
@@ -125,8 +123,8 @@ namespace QuizTools.Vseosvita
             }
         }
 
-        public void StartTest() => StartTestAsync().GetAwaiter().GetResult();
-        public async Task StartTestAsync()
+        public BaseVseosvitaQuestion StartTest() => StartTestAsync().GetAwaiter().GetResult();
+        public async Task<BaseVseosvitaQuestion> StartTestAsync()
         {
             if (!IsJoined)
                 throw new InvalidOperationException("User is not joined to the test");
@@ -138,8 +136,9 @@ namespace QuizTools.Vseosvita
             startExecutionRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
 
             HttpResponseMessage startExecutionResponse = await Client.SendAsync(startExecutionRequest);
+            StartedTest = true;
 
-            Logger.WriteInfoLine(startExecutionResponse.Content.ReadAsStringAsync().Result);
+            return BaseVseosvitaQuestion.FromJSON(JsonDocument.Parse(startExecutionResponse.Content.ReadAsStringAsync().Result).RootElement);
         }
 
         public VseosvitaEndTestInformation EndTest() => EndTestAsync().GetAwaiter().GetResult();

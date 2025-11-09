@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizTools.Vseosvita.QuestionTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,11 +59,10 @@ namespace QuizTools.Vseosvita
             {
                 Console.WriteLine($"Joined test successfully with ID {user.ID}!\nPress enter to start test");
                 Console.ReadLine();
-                user.StartTest();
-                Console.WriteLine("Started test!\nPress enter to finish test");
+                BaseVseosvitaQuestion question = user.StartTest();
+                Console.WriteLine("Started test!\nPress enter to answer first question");
                 Console.ReadLine();
-                VseosvitaEndTestInformation information = user.EndTest();
-                Logger.WriteInfoLine($"Test finished at {information.FinishedAt} in {information.DurationSeconds} seconds for {information.Grade} grade");
+                question.AnswerQuestion(user, 1);
             }
         }
     }
