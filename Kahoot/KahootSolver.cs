@@ -17,6 +17,7 @@ namespace QuizTools.Kahoot
         private KahootPlayer player;
         private HttpClient client;
         private float accuracy;
+        public Action<BaseKahootQuestion, bool> OnQuestionAnswered;
 
         public KahootSolver(KahootChallenge challenge, string nickname, float accuracy = 1) : this(challenge, challenge.Join(nickname), accuracy) { }
         public KahootSolver(KahootChallenge challenge, KahootPlayer player, float accuracy = 1)
@@ -39,11 +40,7 @@ namespace QuizTools.Kahoot
                     Logger.WriteWarningLine($"Q{i + 1} is unkown, skipping it...");
                     continue;
                 }
-                Logger.WriteInfoLine($"Q{i + 1}: {question.Title}");
-                if (question.AnswerCorrect(challenge, player, client, accuracy))
-                    Logger.WriteInfoLine($"Successfuly answered to the question number {i + 1}!");
-                else
-                    Logger.WriteErrorLine($"Failed to answer the question number {i + 1}!");
+                OnQuestionAnswered?.Invoke(question, question.AnswerCorrect(challenge, player, client, accuracy));
             }
         }
         public async Task RunAsync()
@@ -56,10 +53,7 @@ namespace QuizTools.Kahoot
                     Logger.WriteWarningLine($"Q{i + 1} is unkown, skipping it...");
                     continue;
                 }
-                if (await question.AnswerCorrectAsync(challenge, player, client, accuracy))
-                    Logger.WriteInfoLine($"Successfuly answered to the question number {i + 1}!");
-                else
-                    Logger.WriteErrorLine($"Failed to answer the question number {i + 1}!");
+                OnQuestionAnswered?.Invoke(question, await question.AnswerCorrectAsync(challenge, player, client, accuracy));
             }
         }
     }

@@ -149,7 +149,15 @@ namespace QuizTools.Kahoot
                 }
                 catch { }
 
-                KahootSolver solver = new KahootSolver(KahootChallenge.Get(game), name, accuracy);
+                KahootChallenge challenge = KahootChallenge.Get(game);
+                KahootSolver solver = new KahootSolver(challenge, name, accuracy);
+                solver.OnQuestionAnswered += (question, success) =>
+                {
+                    if (success)
+                        Logger.WriteInfoLine($"Answered to Q{Array.IndexOf(challenge.Questions, question)} [{question.Title}] successfuly!");
+                    else
+                        Logger.WriteInfoLine($"Something went wrong when was trying to answer Q{Array.IndexOf(challenge.Questions, question)} [{question.Title}]");
+                };
                 if (answer == "n")
                     solver.Run();
                 else
@@ -258,15 +266,7 @@ namespace QuizTools.Kahoot
                 return;
             }
             KahootBruteForcer bruteForcer = new KahootBruteForcer(startPin);
-            bruteForcer.OnKahootFound += (challenge) =>
-            {
-                KahootBotSpamer botSpamer = new KahootBotSpamer("BruteForcerBot", challenge);
-                botSpamer.OnBotSent += (bot) =>
-                {
-                    KahootSolver solver = new KahootSolver(challenge, bot, 1);
-                    solver.Run();
-                };
-            };
+            bruteForcer.OnKahootFound += WriteInfo;
             bruteForcer.BruteForce();
         }
     }
