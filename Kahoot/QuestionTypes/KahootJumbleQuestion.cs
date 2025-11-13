@@ -14,7 +14,7 @@ namespace QuizTools.Kahoot.QuestionTypes
     {
         public string[] CorrectOrder { get; }
 
-        public KahootJumbleQuestion(JsonElement jSON) : base(jSON)
+        public KahootJumbleQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             List<string> correctOrder = new();
             if (jSON.TryGetProperty("choices", out JsonElement choices))

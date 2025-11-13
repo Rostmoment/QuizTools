@@ -37,7 +37,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         }
         public bool IsDropPin => Type == KahootQuestionType.DropPin;
 
-        public KahootPinQuestion(JsonElement jSON) : base(jSON)
+        public KahootPinQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             JsonElement pinData;
 

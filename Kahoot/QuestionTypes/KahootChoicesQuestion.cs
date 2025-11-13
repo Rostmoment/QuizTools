@@ -23,7 +23,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         private List<KahootChoice> choices = new List<KahootChoice>();
         public KahootChoice[] Choices { get; private set; }
 
-        public KahootChoicesQuestion(JsonElement jSON) : base(jSON)
+        public KahootChoicesQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             if (JSON.TryGetProperty("choices", out JsonElement element))
             {

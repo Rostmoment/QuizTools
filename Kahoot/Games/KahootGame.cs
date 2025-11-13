@@ -38,7 +38,7 @@ namespace QuizTools.Kahoot.Games
             Language = root.GetProperty("language").GetString();
             CreatedTime = DatetimeUtils.FromUnixTime(root.GetProperty("created").GetInt64());
             ModifiedTime = DatetimeUtils.FromUnixTime(root.GetProperty("modified").GetInt64());
-            Questions = BaseKahootQuestion.FromJSON(root.GetProperty("questions").EnumerateArray());
+            Questions = KahootQuestionsFabric.ArrayFromJSON(root.GetProperty("questions").EnumerateArray(), this);
             Creator = new KahootUser(root);
 
             JSON = root;

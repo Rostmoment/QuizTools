@@ -55,7 +55,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         private static Dictionary<KahootQuestionType, string> typeToString = stringToType.ToDictionary(x => x.Value, x => x.Key);
 
         public static bool GivesPoints(this KahootQuestionType type) => givesPoints.Contains(type);
-        public static KahootQuestionType ToQuestionType(this string str)
+        public static KahootQuestionType ToQuestionType(string str)
         {
             if (stringToType.TryGetValue(str, out KahootQuestionType type))
                 return type;

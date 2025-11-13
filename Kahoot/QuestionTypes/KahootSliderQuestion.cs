@@ -18,7 +18,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public int Max { get; }
         public int Count => (Max - Min) / Step + 1;
 
-        public KahootSliderQuestion(JsonElement jSON) : base(jSON)
+        public KahootSliderQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             JsonElement slider = jSON.GetProperty("choiceRange");
             Step = (int)slider.GetProperty("step").GetDouble();

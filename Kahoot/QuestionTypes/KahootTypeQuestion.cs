@@ -13,7 +13,7 @@ namespace QuizTools.Kahoot.QuestionTypes
     class KahootTypeQuestion : BaseKahootQuestion
     {
         private string[] answers;
-        public KahootTypeQuestion(JsonElement jSON) : base(jSON)
+        public KahootTypeQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             answers = [];
             if (JSON.TryGetProperty("choices", out JsonElement element))

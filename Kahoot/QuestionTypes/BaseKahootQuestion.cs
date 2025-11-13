@@ -15,9 +15,10 @@ namespace QuizTools.Kahoot.QuestionTypes
     {
         #region initialization
         public BaseKahootQuestion() { }
-        public BaseKahootQuestion(JsonElement jSON)
+        public BaseKahootQuestion(JsonElement jSON, KahootGame game)
         {
-            Type = jSON.GetProperty("type").GetString().ToQuestionType();
+            Game = game;
+            Type = KahootQuestionTypeExtensions.ToQuestionType(jSON.GetProperty("type").GetString());
             Title = WebUtility.HtmlDecode(jSON.GetProperty("question").GetString());
 
             Image = ImageMetaData.FromJSON(jSON);
@@ -29,6 +30,8 @@ namespace QuizTools.Kahoot.QuestionTypes
             PointsMultiplier = jSON.GetInt32OrDefault("pointsMultiplier", 1);
             JSON = jSON;
         }
+        public int Index => Array.IndexOf(Game.Questions, this);
+        public KahootGame Game { get; }
         public KahootQuestionType Type { get; }
         public string Title { get; }
         public ImageMetaData Image { get; }
@@ -40,6 +43,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public bool GivesPoints { get; }
         public int PointsMultiplier { get; }
         public virtual int MaxPoints => GivesPoints ? 1000 * PointsMultiplier : 0;
+        public virtual int MinNotZeroPoints => MaxPoints / 2;
 
         public JsonElement JSON { get; }
 
@@ -65,49 +69,6 @@ namespace QuizTools.Kahoot.QuestionTypes
         public virtual void WriteAnswers()
         {
 
-        }
-
-        public static BaseKahootQuestion[] FromJSON(JsonElement.ArrayEnumerator json)
-        {
-            List<BaseKahootQuestion> result = new List<BaseKahootQuestion>();
-            while (json.MoveNext())
-            {
-                JsonElement current = json.Current;
-                string type = current.GetProperty("type").GetString();
-                switch (type.ToQuestionType())
-                {
-                    case KahootQuestionType.Unknown:
-                        Logger.WriteWarningLine($"Unknown type {type}");
-                        result.Add(new KahootUnknownQuestion(current));
-                        continue;
-                    case KahootQuestionType.Quiz or KahootQuestionType.MultipleAnswersQuiz
-                    or KahootQuestionType.Poll or KahootQuestionType.MultipleAnswersPoll:
-                        result.Add(new KahootChoicesQuestion(current));
-                        break;
-                    case KahootQuestionType.OpenEnded or KahootQuestionType.Feedback:
-                        result.Add(new KahootTypeQuestion(current));
-                        break;
-                    case KahootQuestionType.Slider:
-                        result.Add(new KahootSliderQuestion(current));
-                        break;
-                    case KahootQuestionType.Title or KahootQuestionType.Content:
-                        result.Add(new KahootUnknownQuestion(current));
-                        break;
-                    case KahootQuestionType.PinIt or KahootQuestionType.DropPin:
-                        result.Add(new KahootPinQuestion(current));
-                        break;
-                    case KahootQuestionType.NPS or KahootQuestionType.Scale:
-                        result.Add(new KahootScaleQuestion(current));
-                        break;
-                    case KahootQuestionType.Jumble:
-                        result.Add(new KahootJumbleQuestion(current));
-                        break;
-                    default:
-                        result.Add(new BaseKahootQuestion(current));
-                        break;
-                }
-            }
-            return result.ToArray();
         }
 
 

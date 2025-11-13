@@ -21,7 +21,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public string Label { get; }
         public string ScaleType { get; }
 
-        public KahootScaleQuestion(JsonElement jSON) : base(jSON)
+        public KahootScaleQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             if (jSON.TryGetProperty("scaleRange", out JsonElement range))
             {
