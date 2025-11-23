@@ -8,13 +8,22 @@ namespace QuizTools.GeneralUtils
 {
     public static class CollectionsUtils
     {
-        public static string ToSeperateString<T>(this IEnumerable<T> values, string seperator = null)
+        public static bool ArrayIsNullOrEmpty(this Array array) => array == null || array.Length == 0;
+        
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> values)
         {
-            if (values == null || values.Count() == 0)
+            if (values == null)
+                return true;
+            return values.Count() == 0;
+        }
+
+        public static string ToSeparatedString<T>(this IEnumerable<T> values) => values.ToSeparatedString(".");
+        public static string ToSeparatedString<T>(this IEnumerable<T> values, string seperator)
+        {
+            if (values.IsNullOrEmpty())
                 return string.Empty;
 
-            if (seperator == null)
-                seperator = ".";
+            ArgumentNullException.ThrowIfNull(seperator, nameof(seperator));
 
             StringBuilder sb = new StringBuilder();
             foreach (T value in values)
@@ -26,6 +35,7 @@ namespace QuizTools.GeneralUtils
             sb.Remove(sb.Length - seperator.Length, seperator.Length);
             return sb.ToString();
         }
+
         public static int[] IndexesOf<T>(this IEnumerable<T> values, Func<T, bool> func)
         {
             List<int> list = new List<int>();

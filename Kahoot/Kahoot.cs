@@ -35,7 +35,7 @@ namespace QuizTools.Kahoot
                     $"\nStart: {challenge.StartTime}" +
                     $"\nEnd: {challenge.EndTime}" +
                     $"\nMax players: {challenge.MaxPlayers}" +
-                    $"\nPlayers ({challenge.Players.Length}): {challenge.Players.ToSeperateString(", ")}" +
+                    $"\nPlayers ({challenge.Players.Length}): {challenge.Players.ToSeparatedString(", ")}" +
                     $"\nHost: {challenge.Host.ToString().MakeHyperlink(challenge.Host.Link)}";
             }
 

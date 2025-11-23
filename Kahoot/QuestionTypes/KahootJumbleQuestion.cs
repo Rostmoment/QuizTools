@@ -30,7 +30,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public override void WriteAnswers()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($" - Correct Order: {CorrectOrder.ToSeperateString(" --- ")}");
+            Console.WriteLine($" - Correct Order: {CorrectOrder.ToSeparatedString(" --- ")}");
         }
 
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)

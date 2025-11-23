@@ -9,19 +9,6 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootChoicesQuestion : BaseKahootQuestion
     {
-        public override int MaxPoints
-        {
-            get
-            {
-                if (IsMultipleAnswers && !IsPoll)
-                    return Choices.Count(c => c.IsCorrect) * 500 * PointsMultiplier;
-                return base.MaxPoints;
-            }
-        }
-        public bool IsMultipleAnswers => Type == KahootQuestionType.MultipleAnswersQuiz || Type == KahootQuestionType.MultipleAnswersPoll;
-        public bool IsPoll => Type == KahootQuestionType.Poll || Type == KahootQuestionType.MultipleAnswersPoll;
-        private List<KahootChoice> choices = new List<KahootChoice>();
-        public KahootChoice[] Choices { get; private set; }
 
         public KahootChoicesQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
@@ -35,9 +22,24 @@ namespace QuizTools.Kahoot.QuestionTypes
                 }
             }
             Choices = choices.ToArray();
+            CorrectAnswer = new KahootAnswer(this, Choices.IndexesOf(x => x.IsCorrect));
         }
 
-
+        #region Properties
+        public override int MaxPoints
+        {
+            get
+            {
+                if (IsMultipleAnswers && !IsPoll)
+                    return Choices.Count(c => c.IsCorrect) * 500 * PointsMultiplier;
+                return base.MaxPoints;
+            }
+        }
+        public bool IsMultipleAnswers => Type == KahootQuestionType.MultipleAnswersQuiz || Type == KahootQuestionType.MultipleAnswersPoll;
+        public bool IsPoll => Type == KahootQuestionType.Poll || Type == KahootQuestionType.MultipleAnswersPoll;
+        private List<KahootChoice> choices = new List<KahootChoice>();
+        public KahootChoice[] Choices { get; private set; }
+        #endregion
 
         public override void WriteAnswers()
         {
@@ -52,13 +54,15 @@ namespace QuizTools.Kahoot.QuestionTypes
             }
         }
 
-        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
-            int pointsToGive = CalculatePoints(accuracy);
-            int time = CalculateReactionTime(pointsToGive, challenge);
+            ArgumentNullException.ThrowIfNull(answer.ReactionTime, nameof(answer.ReactionTime));
+            ArgumentNullException.ThrowIfNull(answer.Points, nameof(answer.Points));
+            if (answer.Answers.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(answer.Answers));
+
             string json = "";
-            
+
             if (IsMultipleAnswers)
             {
                 var payload = new
@@ -74,12 +78,12 @@ namespace QuizTools.Kahoot.QuestionTypes
                         {
                             new
                             {
-                                reactionTime = time,
+                                reactionTime = answer.ReactionTime,
                                 playerId = player.Name,
                                 playerCid = player.ID,
-                                selectedChoices = Choices.IndexesOf(x => x.IsCorrect),
+                                selectedChoices = answer.Answers,
                                 isCorrect = true,
-                                points = pointsToGive,
+                                points = answer.Points,
                             }
                         }
                     }
@@ -101,12 +105,12 @@ namespace QuizTools.Kahoot.QuestionTypes
                         {
                             new 
                             {
-                                reactionTime = time,
+                                reactionTime = answer.ReactionTime,
                                 playerId = player.Name,
                                 playerCid = player.ID,
-                                choiceIndex = Choices.IndexOf(x => x.IsCorrect),
+                                choiceIndex = answer.Answers[0],
                                 isCorrect = true,
-                                points = pointsToGive,
+                                points = answer.Points,
                             }
                         }
                     }

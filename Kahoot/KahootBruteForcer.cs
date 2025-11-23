@@ -37,7 +37,7 @@ namespace QuizTools.Kahoot
                     challenge.StartTime.ToString(),
                     challenge.EndTime.ToString(),
                     challenge.MaxPlayers.ToString(),
-                    challenge.Players.ToSeperateString(", "),
+                    challenge.Players.ToSeparatedString(", "),
                     challenge.NumberOfQuestions.ToString(),
                     challenge.DetailsLink,
                     challenge.QuizJSONLink,

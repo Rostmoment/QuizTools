@@ -30,6 +30,9 @@ namespace QuizTools.Kahoot.QuestionTypes
             PointsMultiplier = jSON.GetInt32OrDefault("pointsMultiplier", 1);
             JSON = jSON;
         }
+        #endregion
+
+        #region Properties
         public int Index => Array.IndexOf(Game.Questions, this);
         public KahootGame Game { get; }
         public KahootQuestionType Type { get; }
@@ -46,8 +49,10 @@ namespace QuizTools.Kahoot.QuestionTypes
         public virtual int MinNotZeroPoints => MaxPoints / 2;
 
         public JsonElement JSON { get; }
+        public KahootAnswer CorrectAnswer { get; protected set; }
 
         #endregion
+
         public bool Answer(KahootChallenge challenge, KahootPlayer player, KahootAnswer answer) => Answer(challenge, player, new HttpClient(), answer);
         public bool Answer(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer) => Task.Run(() => AnswerAsync(challenge, player, client, answer)).GetAwaiter().GetResult();
 
