@@ -66,6 +66,8 @@ namespace QuizTools.Kahoot.QuestionTypes
             ArgumentNullException.ThrowIfNull(player, nameof(player));
             ArgumentNullException.ThrowIfNull(client, nameof(client));
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
+            ArgumentNullException.ThrowIfNull(answer.ReactionTime, nameof(answer.ReactionTime));
+            ArgumentNullException.ThrowIfNull(answer.Points, nameof(answer.Points));
 
             return false;
         }

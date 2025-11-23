@@ -56,10 +56,10 @@ namespace QuizTools.Kahoot.QuestionTypes
 
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            ArgumentNullException.ThrowIfNull(answer.ReactionTime, nameof(answer.ReactionTime));
-            ArgumentNullException.ThrowIfNull(answer.Points, nameof(answer.Points));
-            if (answer.Answers.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(answer.Answers));
+            base.AnswerAsync(challenge, player, client, answer);
+            ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Answers));
+            if (answer.Answers.Length == 0)
+                throw new ArgumentException("Array of answers should not be empty");
 
             string json = "";
 
@@ -82,7 +82,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                                 playerId = player.Name,
                                 playerCid = player.ID,
                                 selectedChoices = answer.Answers,
-                                isCorrect = true,
+                                isCorrect = answer.IsCorrect,
                                 points = answer.Points,
                             }
                         }
@@ -109,7 +109,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                                 playerId = player.Name,
                                 playerCid = player.ID,
                                 choiceIndex = answer.Answers[0],
-                                isCorrect = true,
+                                isCorrect = answer.IsCorrect,
                                 points = answer.Points,
                             }
                         }

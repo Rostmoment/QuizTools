@@ -39,15 +39,14 @@ namespace QuizTools.Kahoot.QuestionTypes
                 Console.WriteLine($" - {answer}");
         }
 
-        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
-            int pointsToGive = CalculatePoints(accuracy);
-            int time = CalculateReactionTime(pointsToGive, challenge);
-            string answer = "123";
-            if (answers.Length > 0)
-                answer = Program.RNG.ChoseRandom(answers);
-            
+            base.AnswerAsync(challenge, player, client, answer);
+
+            ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Inputs));
+            if (answer.Inputs.Length == 0)
+                throw new ArgumentException("Array of answers should not be empty");
+
             var payload = new
             {
                 quizId = challenge.QuizID,
@@ -61,12 +60,12 @@ namespace QuizTools.Kahoot.QuestionTypes
                     {
                         new
                         {
-                            reactionTime = time,
+                            reactionTime = answer.ReactionTime,
                             playerId = player.Name,
                             playerCid = player.ID,
-                            isCorrect = true,
-                            points = pointsToGive,
-                            text = answer
+                            isCorrect = answer.IsCorrect,
+                            points = answer.Points,
+                            text = answer.Inputs[0]
                         }
                     }
                 }

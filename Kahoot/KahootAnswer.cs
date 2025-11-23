@@ -14,15 +14,16 @@ namespace QuizTools.Kahoot
         {
             this.Question = question;
             this.Points = question.MaxPoints;
+            this.isCorrect = true;
         }
         public KahootAnswer(BaseKahootQuestion question, float x, float y) : this(question, new Vector2(x, y)) { }
         public KahootAnswer(BaseKahootQuestion question, Vector2? answer) : this(question)
         {
             this.xy = answer;
         }
-        public KahootAnswer(BaseKahootQuestion question, string answer) : this(question)
+        public KahootAnswer(BaseKahootQuestion question, params string[] answer) : this(question)
         {
-            this.Input = answer;
+            this.inputs = answer;
         }
         public KahootAnswer(BaseKahootQuestion question, int value) : this(question)
         {
@@ -55,8 +56,8 @@ namespace QuizTools.Kahoot
         /// <summary>
         /// Used for <see cref="KahootInputTextQuestion"/>
         /// </summary>
-        public string? Input { get; }
-
+        public string[]? Inputs => inputs?.ToArray();
+        private string[]? inputs;
 
         private int points;
         /// <summary>
@@ -69,18 +70,39 @@ namespace QuizTools.Kahoot
             get => points;
             set
             {
+                if (value == 0)
+                {
+                    if (!IsCheated)
+                        isCorrect = false;
+
+                    points = 0;
+                    return;
+                }
                 if (!Question.Type.GivesPoints())
                 {
-                    points = 0;
-                    reactionTime = 0;
+                    if (!IsCheated)
+                    {
+                        isCorrect = true;
+                        points = 0;
+                        reactionTime = 0;
+                    }
                     return;
                 }
 
-                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Question.MaxPoints, nameof(value));
-                if (Question.MinNotZeroPoints > value && value != 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
 
-                reactionTime = 2 * Question.Time * ((Question.MaxPoints - value) /  Question.MaxPoints);
+                int min = Question.MinNotZeroPoints;
+                if (IsCheated)
+                    min = 0; // Normally you cannot have points less than min not zero but more than zero, but it's cheated mode, so sure
+
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Question.MaxPoints, nameof(value)); // Even if cheated some validation should be done because kahoot doesn't allow to go above max or
+                ArgumentOutOfRangeException.ThrowIfLessThan(value, min, nameof(value));
+
+                if (!IsCheated)
+                {
+                    isCorrect = value != 0;
+                    reactionTime = 2 * Question.Time * ((Question.MaxPoints - value) / Question.MaxPoints);
+                }
+
                 points = value;
             }
         }
@@ -104,12 +126,32 @@ namespace QuizTools.Kahoot
                     return;
                 }
 
-                ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(value));
-                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Question.Time, nameof(value));
+                if (!IsCheated)
+                {
+                    ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(value));
+                    ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Question.Time, nameof(value));
+                    points = Question.MaxPoints - ((Question.MaxPoints * value) / (2 * Question.Time));
+                }
 
-                points = Question.MaxPoints - ((Question.MaxPoints * value) / (2 * Question.Time));
                 reactionTime = value;
             }
         }
+
+        public bool IsCorrect
+        {
+            get => isCorrect;
+            set
+            {
+                if (!IsCheated)
+                    throw new InvalidOperationException("You can change if answer is correct in cheated mode");
+                isCorrect = value;
+            }
+        }
+        private bool isCorrect;
+
+        /// <summary>
+        /// If true, all validations will be removed
+        /// </summary>
+        public bool IsCheated { get; init; } = false;
     }
 }
