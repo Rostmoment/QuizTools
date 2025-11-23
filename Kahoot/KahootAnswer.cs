@@ -43,7 +43,7 @@ namespace QuizTools.Kahoot
         private Vector2? xy;
 
         /// <summary>
-        /// Used for <see cref="KahootJumbleQuestion"/> and <see cref=".ahootChoicesQuestion"/>
+        /// Used for <see cref="KahootChoicesQuestion"/>
         /// </summary>
         public int[]? Answers => answers?.ToArray();
         private int[]? answers;
@@ -54,7 +54,7 @@ namespace QuizTools.Kahoot
         public int? Value { get; }
 
         /// <summary>
-        /// Used for <see cref="KahootInputTextQuestion"/>
+        /// Used for <see cref="KahootJumbleQuestion"/> and <see cref="KahootInputTextQuestion"/>
         /// </summary>
         public string[]? Inputs => inputs?.ToArray();
         private string[]? inputs;

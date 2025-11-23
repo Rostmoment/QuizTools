@@ -12,8 +12,6 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootJumbleQuestion : BaseKahootQuestion
     {
-        public string[] CorrectOrder { get; }
-
         public KahootJumbleQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             List<string> correctOrder = new();
@@ -24,20 +22,18 @@ namespace QuizTools.Kahoot.QuestionTypes
                     correctOrder.Add(WebUtility.HtmlDecode(choice.GetProperty("answer").GetString()));
                 }
             }
-            CorrectOrder = correctOrder.ToArray();
+            CorrectAnswer = new KahootAnswer(this, correctOrder.ToArray());
         }
 
         public override void WriteAnswers()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($" - Correct Order: {CorrectOrder.ToSeparatedString(" --- ")}");
+            Console.WriteLine($" - Correct Order: {CorrectAnswer.Inputs.ToSeparatedString(" --- ")}");
         }
 
-        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
-            int pointsToGive = CalculatePoints(accuracy);
-            int time = CalculateReactionTime(pointsToGive, challenge);
+            await base.AnswerAsync(challenge, player, client, answer);
 
             var payload = new
             {
@@ -52,12 +48,12 @@ namespace QuizTools.Kahoot.QuestionTypes
                     {
                         new
                         {
-                            reactionTime = time,
+                            reactionTime = answer.ReactionTime,
                             playerId = player.Name,
                             playerCid = player.ID,
                             isCorrect = true,
-                            points = pointsToGive,
-                            selectedJumbleOrder = Enumerable.Range(0, CorrectOrder.Length).ToArray()
+                            points = answer.Points,
+                            selectedJumbleOrder = answer.Answers.Select((x, index) => index).ToArray()
                         }
                     }
                 }

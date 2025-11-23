@@ -39,7 +39,7 @@ namespace QuizTools.Kahoot.QuestionTypes
 
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            base.AnswerAsync(challenge, player, client, answer);
+            await base.AnswerAsync(challenge, player, client, answer);
 
             ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Inputs));
             if (answer.Inputs.Length == 0)

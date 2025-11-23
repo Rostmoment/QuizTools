@@ -56,7 +56,7 @@ namespace QuizTools.Kahoot.QuestionTypes
 
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            base.AnswerAsync(challenge, player, client, answer);
+            await base.AnswerAsync(challenge, player, client, answer);
             ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Answers));
             if (answer.Answers.Length == 0)
                 throw new ArgumentException("Array of answers should not be empty");
