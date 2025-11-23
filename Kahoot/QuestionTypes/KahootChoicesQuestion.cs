@@ -52,7 +52,7 @@ namespace QuizTools.Kahoot.QuestionTypes
             }
         }
 
-        public override async Task<bool> AnswerCorrectAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
         {
             await base.AnswerCorrectAsync(challenge, player, client, accuracy);
             int pointsToGive = CalculatePoints(accuracy);

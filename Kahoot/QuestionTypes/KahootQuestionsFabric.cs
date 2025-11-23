@@ -23,7 +23,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 or KahootQuestionType.Poll or KahootQuestionType.MultipleAnswersPoll:
                     return new KahootChoicesQuestion(json, game);
                 case KahootQuestionType.OpenEnded or KahootQuestionType.Feedback:
-                    return new KahootTypeQuestion(json, game);
+                    return new KahootInputTextQuestion(json, game);
                 case KahootQuestionType.Slider:
                     return new KahootSliderQuestion(json, game);
                 case KahootQuestionType.Title or KahootQuestionType.Content:

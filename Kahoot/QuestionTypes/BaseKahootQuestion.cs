@@ -48,11 +48,11 @@ namespace QuizTools.Kahoot.QuestionTypes
         public JsonElement JSON { get; }
 
         #endregion
-        public bool AnswerCorrect(KahootChallenge challenge, KahootPlayer player, float accuracy = 1) => AnswerCorrect(challenge, player, new HttpClient(), accuracy);
-        public bool AnswerCorrect(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1) => Task.Run(() => AnswerCorrectAsync(challenge, player, client, accuracy)).GetAwaiter().GetResult();
+        public bool Answer(KahootChallenge challenge, KahootPlayer player, KahootAnswer answer) => Answer(challenge, player, new HttpClient(), answer);
+        public bool Answer(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer) => Task.Run(() => AnswerAsync(challenge, player, client, answer)).GetAwaiter().GetResult();
 
-        public async Task<bool> AnswerCorrAnswerCorrectAsyncect(KahootChallenge challenge, KahootPlayer player, float accuracy = 1) => await AnswerCorrectAsync(challenge, player, new HttpClient(), accuracy);
-        public virtual async Task<bool> AnswerCorrectAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, KahootAnswer answer) => await AnswerAsync(challenge, player, new HttpClient(), answer);
+        public virtual async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
             if (!challenge.Questions.Contains(this))
                 throw new ArgumentException("The question does not belong to the specified challenge", nameof(challenge));
@@ -60,8 +60,7 @@ namespace QuizTools.Kahoot.QuestionTypes
             ArgumentNullException.ThrowIfNull(challenge, nameof(challenge));
             ArgumentNullException.ThrowIfNull(player, nameof(player));
             ArgumentNullException.ThrowIfNull(client, nameof(client));
-            if (accuracy < 0 || accuracy > 1 || float.IsNaN(accuracy))
-                throw new ArgumentOutOfRangeException(nameof(accuracy), "Accuracy must be between 0 and 1");
+            ArgumentNullException.ThrowIfNull(answer, nameof(answer));
 
             return false;
         }
@@ -71,25 +70,5 @@ namespace QuizTools.Kahoot.QuestionTypes
 
         }
 
-
-        public int CalculatePoints(float accuracy)
-        {
-            int result = (int)(MaxPoints * accuracy) + Program.RNG.Next(0, 10) * Program.RNG.RandomSign();
-            result = Math.Clamp(result, 0, MaxPoints);
-            return result;
-        }
-        public int CalculateReactionTime(int points, KahootChallenge challenge)
-        {
-            if (!challenge.GameOptions.QuestionTimer)
-                return 0;
-
-            if (MaxPoints == 0)
-                return Math.Max(Time - Program.RNG.Next(100, 200), 0);
-
-            int result = 2 * Time - (2 * points * Time / MaxPoints);
-            if (result > Time)
-                return Math.Max(Time - Program.RNG.Next(100, 200), 0);
-            return Math.Max(result, 0);
-        }
     }
 }

@@ -35,9 +35,9 @@ namespace QuizTools.Kahoot.QuestionTypes
         }
 
 
-        public override async Task<bool> AnswerCorrectAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, int points)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
+            await base.AnswerCorrectAsync(challenge, player, client, points);
             int pointsToGive = CalculatePoints(accuracy);
             int time = CalculateReactionTime(pointsToGive, challenge);
         

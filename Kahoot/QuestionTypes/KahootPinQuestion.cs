@@ -69,7 +69,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 Console.WriteLine($" - This is a Drop Pin question, no correct answer. Width={Width}, Height={Height}");
         }
 
-        public override async Task<bool> AnswerCorrectAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
         {
             await base.AnswerCorrectAsync(challenge, player, client, accuracy);
             double correctX = Program.RNG.NextDouble() * 100;
