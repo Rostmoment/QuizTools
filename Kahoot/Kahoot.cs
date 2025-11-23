@@ -137,20 +137,9 @@ namespace QuizTools.Kahoot
                     Console.Write("➤ ");
                     answer = Console.ReadLine().ToLower();
                 }
-                float accuracy = 1;
-
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.WriteLine("Enter accuracy (0.0 - 1.0), empty or invalid for 1");
-                Console.ResetColor();
-                Console.Write("➤ ");
-                try
-                {
-                    accuracy = float.Parse(Console.ReadLine());
-                }
-                catch { }
 
                 KahootChallenge challenge = KahootChallenge.Get(game);
-                KahootSolver solver = new KahootSolver(challenge, name, accuracy);
+                KahootSolver solver = new KahootSolver(challenge, name);
                 solver.OnQuestionAnswered += (question, success) =>
                 {
                     if (success)

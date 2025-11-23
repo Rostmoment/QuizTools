@@ -44,7 +44,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         {
             await base.AnswerAsync(challenge, player, client, answer);
 
-            ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Inputs));
+            ArgumentNullException.ThrowIfNull(answer.Inputs, nameof(answer.Inputs));
             if (answer.Inputs.Length == 0)
                 throw new ArgumentException("Array of answers should not be empty");
 

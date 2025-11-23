@@ -16,18 +16,14 @@ namespace QuizTools.Kahoot
         private KahootChallenge challenge;
         private KahootPlayer player;
         private HttpClient client;
-        private float accuracy;
         public Action<BaseKahootQuestion, bool> OnQuestionAnswered;
 
-        public KahootSolver(KahootChallenge challenge, string nickname, float accuracy = 1) : this(challenge, challenge.Join(nickname), accuracy) { }
-        public KahootSolver(KahootChallenge challenge, KahootPlayer player, float accuracy = 1)
+        public KahootSolver(KahootChallenge challenge, string nickname) : this(challenge, challenge.Join(nickname)) { }
+        public KahootSolver(KahootChallenge challenge, KahootPlayer player)
         {
             this.challenge = challenge;
             this.player = player;
             client = new HttpClient();
-            this.accuracy = accuracy;
-            if (!challenge.GameOptions.QuestionTimer)
-                this.accuracy = 1;
         }
 
         public void Run()
@@ -37,10 +33,15 @@ namespace QuizTools.Kahoot
                 BaseKahootQuestion question = challenge.Questions[i];
                 if (question is KahootUnknownQuestion)
                 {
-                    Logger.WriteWarningLine($"Q{i + 1} is unkown, skipping it...");
+                    Logger.WriteWarningLine($"Q{i + 1} is unknown, skipping it...");
                     continue;
                 }
-                OnQuestionAnswered?.Invoke(question, question.AnswerCorrect(challenge, player, client, accuracy));
+                if (question.CorrectAnswer == null)
+                {
+                    Logger.WriteWarningLine($"Q{i + 1} has no correct answer, skipping it...");
+                    continue;
+                }
+                OnQuestionAnswered?.Invoke(question, question.Answer(challenge, player, client, question.CorrectAnswer));
             }
         }
         public async Task RunAsync()
@@ -53,7 +54,12 @@ namespace QuizTools.Kahoot
                     Logger.WriteWarningLine($"Q{i + 1} is unkown, skipping it...");
                     continue;
                 }
-                OnQuestionAnswered?.Invoke(question, await question.AnswerCorrectAsync(challenge, player, client, accuracy));
+                if (question.CorrectAnswer == null)
+                {
+                    Logger.WriteWarningLine($"Q{i + 1} has no correct answer, skipping it...");
+                    continue;
+                }
+                OnQuestionAnswered?.Invoke(question, await question.AnswerAsync(challenge, player, client, question.CorrectAnswer));
             }
         }
     }
