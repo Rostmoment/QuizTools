@@ -14,7 +14,7 @@ namespace QuizTools.Kahoot
         {
             this.Question = question;
             this.Points = question.MaxPoints;
-            this.isCorrect = true;
+            this.almostCorrect = false;
         }
         public KahootAnswer(BaseKahootQuestion question, float x, float y) : this(question, new Vector2(x, y)) { }
         public KahootAnswer(BaseKahootQuestion question, Vector2? answer) : this(question)
@@ -137,6 +137,18 @@ namespace QuizTools.Kahoot
                 reactionTime = value;
             }
         }
+
+        public bool AlmostCorrect
+        {
+            get => almostCorrect;
+            set
+            {
+                if (!IsCheated)
+                    throw new InvalidOperationException("You can change if answer is correct in cheated mode");
+                almostCorrect = value;
+            }
+        }
+        private bool almostCorrect;
 
         public bool IsCorrect
         {

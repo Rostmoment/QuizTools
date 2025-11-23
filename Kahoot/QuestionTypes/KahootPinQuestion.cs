@@ -38,7 +38,8 @@ namespace QuizTools.Kahoot.QuestionTypes
             Width = pinData.GetInt32OrDefault("width");
             Height = pinData.GetInt32OrDefault("height");
 
-            correctAnswer = new KahootAnswer(this, (X + Width / 2) / Image.Width * 100, (Y + Height / 2) / Image.Height * 100);
+            if (!IsDropPin)
+                correctAnswer = new KahootAnswer(this, (X + Width / 2) / Image.Width * 100, (Y + Height / 2) / Image.Height * 100);
         }
 
         public override void WriteAnswers()
@@ -47,7 +48,7 @@ namespace QuizTools.Kahoot.QuestionTypes
             if (Type == KahootQuestionType.PinIt)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($" - Correct answer at X={correctAnswer.XY.Value.X}, Y={correctAnswer.XY.Value.Y}");
+                Console.WriteLine($" - Correct answer at X={CorrectAnswer.XY.Value.X}, Y={CorrectAnswer.XY.Value.Y}");
             }
             else
                 Console.WriteLine($" - This is a Drop Pin question, no correct answer. Width={Width}, Height={Height}, X={X}, Y={Y}");
@@ -58,15 +59,6 @@ namespace QuizTools.Kahoot.QuestionTypes
             await base.AnswerAsync(challenge, player, client, answer);
 
             ArgumentNullException.ThrowIfNull(answer.XY, nameof(answer.XY));
-
-            double correctX = Program.RNG.NextDouble() * 100;
-            double correctY = Program.RNG.NextDouble() * 100;
-
-            if (!IsDropPin)
-            {
-                correctX = correctAnswer.XY.Value.X;
-                correctY = correctAnswer.XY.Value.Y;
-            }
 
             var payload = new
             {
@@ -88,8 +80,8 @@ namespace QuizTools.Kahoot.QuestionTypes
                             points = answer.Points,
                             pin = new
                             {
-                                x = correctX,
-                                y = correctY
+                                x = answer.XY.Value.X,
+                                y = answer.XY.Value.Y
                             }
                         }
                     }

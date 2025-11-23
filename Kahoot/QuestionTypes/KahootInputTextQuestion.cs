@@ -14,16 +14,19 @@ namespace QuizTools.Kahoot.QuestionTypes
     {
         public KahootInputTextQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
-            List<string> list = new List<string>();
             if (JSON.TryGetProperty("choices", out JsonElement element))
             {
+                List<string> list = new List<string>();
                 JsonElement.ArrayEnumerator array = element.EnumerateArray();
-                foreach (JsonElement choice in array) {
+                foreach (JsonElement choice in array)
+                {
                     if (choice.TryGetProperty("answer", out JsonElement answer) && choice.GetBooleanOrDefault("correct"))
                         list.Add(answer.GetString());
                 }
+                correctAnswer = new KahootAnswer(this, list.ToArray());
             }
-            correctAnswer = new KahootAnswer(this, list.ToArray());
+            else
+                correctAnswer = null;
         }
         public override void WriteAnswers()
         {

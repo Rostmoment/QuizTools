@@ -9,9 +9,9 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootChoicesQuestion : BaseKahootQuestion
     {
-
         public KahootChoicesQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
+            List<KahootChoice> choices = new List<KahootChoice>();
             if (JSON.TryGetProperty("choices", out JsonElement element))
             {
                 JsonElement.ArrayEnumerator elements = element.EnumerateArray();
@@ -37,7 +37,6 @@ namespace QuizTools.Kahoot.QuestionTypes
         }
         public bool IsMultipleAnswers => Type == KahootQuestionType.MultipleAnswersQuiz || Type == KahootQuestionType.MultipleAnswersPoll;
         public bool IsPoll => Type == KahootQuestionType.Poll || Type == KahootQuestionType.MultipleAnswersPoll;
-        private List<KahootChoice> choices = new List<KahootChoice>();
         public KahootChoice[] Choices { get; private set; }
         #endregion
 

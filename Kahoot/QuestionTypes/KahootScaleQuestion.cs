@@ -14,7 +14,7 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootScaleQuestion : BaseKahootQuestion
     {
-        public bool IsNPS => base.Type == KahootQuestionType.NPS;
+        public bool IsNPS => Type == KahootQuestionType.NPS;
         public int AnswersCount => MaxValue - MinValue + 1;
         public int MinValue { get; }
         public int MaxValue { get; }
@@ -37,6 +37,8 @@ namespace QuizTools.Kahoot.QuestionTypes
                 Label = "N/A";
                 ScaleType = "N/A";
             }
+
+            correctAnswer = null; // No correct answer to this question type
         }
 
         public override void WriteAnswers()
@@ -45,11 +47,11 @@ namespace QuizTools.Kahoot.QuestionTypes
             Console.WriteLine($" - Scale from {MinValue} to {MaxValue} ({Label} --- {Type})");
         }
 
-        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
-            int pointsToGive = CalculatePoints(accuracy);
-            int time = CalculateReactionTime(pointsToGive, challenge);
+            await base.AnswerAsync(challenge, player, client, answer);
+            ArgumentNullException.ThrowIfNull(answer.Value, nameof(answer.Value));
+
             var payload = new
             {
                 quizId = challenge.QuizID,
@@ -63,10 +65,12 @@ namespace QuizTools.Kahoot.QuestionTypes
                     {
                         new
                         {
-                            reactionTime = time,
+                            reactionTime = answer.ReactionTime,
+                            isCorrect = answer.IsCorrect,
+                            points = answer.Points,
                             playerId = player.Name,
                             playerCid = player.ID,
-                            choiceValue = Program.RNG.Next(MinValue, MaxValue + 1)
+                            choiceValue = answer.Value
                         }
                     }
                 }
