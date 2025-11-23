@@ -53,7 +53,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                             playerCid = player.ID,
                             isCorrect = true,
                             points = answer.Points,
-                            selectedJumbleOrder = answer.Answers.Select((x, index) => index).ToArray()
+                            selectedJumbleOrder = answer.Inputs.Select((x, index) => index).ToArray()
                         }
                     }
                 }
