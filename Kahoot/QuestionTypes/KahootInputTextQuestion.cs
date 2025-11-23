@@ -12,30 +12,28 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootInputTextQuestion : BaseKahootQuestion
     {
-        private string[] answers;
         public KahootInputTextQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
-            answers = [];
+            List<string> list = new List<string>();
             if (JSON.TryGetProperty("choices", out JsonElement element))
             {
                 JsonElement.ArrayEnumerator array = element.EnumerateArray();
-                List<string> list = new List<string>();
                 foreach (JsonElement choice in array) {
                     if (choice.TryGetProperty("answer", out JsonElement answer) && choice.GetBooleanOrDefault("correct"))
                         list.Add(answer.GetString());
                 }
-                answers = list.ToArray();
             }
+            CorrectAnswer = new KahootAnswer(this, list.ToArray());
         }
         public override void WriteAnswers()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            if (answers.Length == 0)
+            if (CorrectAnswer.Inputs.ArrayIsNullOrEmpty())
             {
                 Console.WriteLine("No answers!");
                 return;
             }
-            foreach (string answer in answers)
+            foreach (string answer in CorrectAnswer.Inputs)
                 Console.WriteLine($" - {answer}");
         }
 
