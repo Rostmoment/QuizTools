@@ -22,7 +22,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 }
             }
             Choices = choices.ToArray();
-            CorrectAnswer = new KahootAnswer(this, Choices.IndexesOf(x => x.IsCorrect));
+            correctAnswer = new KahootAnswer(this, Choices.IndexesOf(x => x.IsCorrect));
         }
 
         #region Properties

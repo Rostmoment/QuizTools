@@ -23,7 +23,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                         list.Add(answer.GetString());
                 }
             }
-            CorrectAnswer = new KahootAnswer(this, list.ToArray());
+            correctAnswer = new KahootAnswer(this, list.ToArray());
         }
         public override void WriteAnswers()
         {

@@ -27,7 +27,7 @@ namespace QuizTools.Kahoot
         }
         public KahootAnswer(BaseKahootQuestion question, int value) : this(question)
         {
-            this.Value = value;
+            this.value = value;
         }
         public KahootAnswer(BaseKahootQuestion question, params int[] answers) : this(question)
         {
@@ -51,7 +51,8 @@ namespace QuizTools.Kahoot
         /// <summary>
         /// Used for <see cref="KahootSliderQuestion"/> and <see cref="KahootScaleQuestion"/>
         /// </summary>
-        public int? Value { get; }
+        public int? Value => value;
+        private int? value;
 
         /// <summary>
         /// Used for <see cref="KahootJumbleQuestion"/> and <see cref="KahootInputTextQuestion"/>
@@ -153,5 +154,21 @@ namespace QuizTools.Kahoot
         /// If true, all validations will be removed
         /// </summary>
         public bool IsCheated { get; init; } = false;
+
+        public KahootAnswer Copy()
+        {
+            KahootAnswer result = new KahootAnswer(Question)
+            {
+                isCorrect = this.isCorrect,
+                IsCheated = this.IsCheated,
+                points = this.points,
+                reactionTime = this.reactionTime,
+                xy = this.xy,
+                value = this.value,
+                answers = this.answers,
+                inputs = this.inputs
+            };
+            return result;
+        }
     }
 }

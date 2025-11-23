@@ -12,29 +12,11 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootPinQuestion : BaseKahootQuestion
     {
-        public double Width { get; } 
-        public double Height { get; }
-        public double X { get; }
-        public double Y { get; }
+        public float Width { get; } 
+        public float Height { get; }
+        public float X { get; }
+        public float Y { get; }
 
-        public double CorrectX
-        {
-            get
-            {
-                if (IsDropPin)
-                    return double.NaN;
-                return (X + Width / 2) / Image.Width * 100;
-            }
-        }
-        public double CorrectY
-        {
-            get
-            {
-                if (IsDropPin)
-                    return double.NaN;
-                return (Y + Height / 2) / Image.Height * 100;
-            }
-        }
         public bool IsDropPin => Type == KahootQuestionType.DropPin;
 
         public KahootPinQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
@@ -44,17 +26,19 @@ namespace QuizTools.Kahoot.QuestionTypes
             if (Type == KahootQuestionType.PinIt)
             {
                 pinData = jSON.GetProperty("choiceShapes").EnumerateArray().First();
-                X = pinData.GetDoubleOrDefault("x");
-                Y = pinData.GetDoubleOrDefault("y");
+                X = (float)pinData.GetDoubleOrDefault("x");
+                Y = (float)pinData.GetDoubleOrDefault("y");
             }
             else
             {
                 pinData = jSON.GetProperty("imageMetadata");
-                X = double.NaN;
-                Y = double.NaN;
+                X = float.NaN;
+                Y = float.NaN;
             }
             Width = pinData.GetInt32OrDefault("width");
             Height = pinData.GetInt32OrDefault("height");
+
+            correctAnswer = new KahootAnswer(this, (X + Width / 2) / Image.Width * 100, (Y + Height / 2) / Image.Height * 100);
         }
 
         public override void WriteAnswers()
@@ -63,24 +47,25 @@ namespace QuizTools.Kahoot.QuestionTypes
             if (Type == KahootQuestionType.PinIt)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($" - Correct answer at X={X}, Y={Y}. Width={Width}, Height={Height}");
+                Console.WriteLine($" - Correct answer at X={correctAnswer.XY.Value.X}, Y={correctAnswer.XY.Value.Y}");
             }
             else
-                Console.WriteLine($" - This is a Drop Pin question, no correct answer. Width={Width}, Height={Height}");
+                Console.WriteLine($" - This is a Drop Pin question, no correct answer. Width={Width}, Height={Height}, X={X}, Y={Y}");
         }
 
-        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, float accuracy = 1)
+        public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
-            await base.AnswerCorrectAsync(challenge, player, client, accuracy);
+            await base.AnswerAsync(challenge, player, client, answer);
+
+            ArgumentNullException.ThrowIfNull(answer.XY, nameof(answer.XY));
+
             double correctX = Program.RNG.NextDouble() * 100;
             double correctY = Program.RNG.NextDouble() * 100;
-            int pointsToGive = CalculatePoints(accuracy);
-            int time = CalculateReactionTime(pointsToGive, challenge);
 
             if (!IsDropPin)
             {
-                correctX = CorrectX + Program.RNG.Next(1, 2) + Program.RNG.NextDouble() * Program.RNG.RandomSign();
-                correctY = CorrectY + Program.RNG.Next(1, 2) + Program.RNG.NextDouble() * Program.RNG.RandomSign();
+                correctX = correctAnswer.XY.Value.X;
+                correctY = correctAnswer.XY.Value.Y;
             }
 
             var payload = new
@@ -96,11 +81,11 @@ namespace QuizTools.Kahoot.QuestionTypes
                     {
                         new
                         {
-                            reactionTime = time,
+                            reactionTime = answer.ReactionTime,
                             playerId = player.Name,
                             playerCid = player.ID,
                             isCorrect = true,
-                            points = pointsToGive,
+                            points = answer.Points,
                             pin = new
                             {
                                 x = correctX,

@@ -22,7 +22,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                     correctOrder.Add(WebUtility.HtmlDecode(choice.GetProperty("answer").GetString()));
                 }
             }
-            CorrectAnswer = new KahootAnswer(this, correctOrder.ToArray());
+            correctAnswer = new KahootAnswer(this, correctOrder.ToArray());
         }
 
         public override void WriteAnswers()
@@ -34,6 +34,10 @@ namespace QuizTools.Kahoot.QuestionTypes
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
             await base.AnswerAsync(challenge, player, client, answer);
+            ArgumentNullException.ThrowIfNull(answer.Inputs, nameof(answer.Inputs));
+
+            if (answer.Inputs.Length == 0)
+                throw new ArithmeticException("Array of answers should not be empty");
 
             var payload = new
             {

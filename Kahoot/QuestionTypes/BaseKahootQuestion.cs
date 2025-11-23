@@ -49,7 +49,8 @@ namespace QuizTools.Kahoot.QuestionTypes
         public virtual int MinNotZeroPoints => MaxPoints / 2;
 
         public JsonElement JSON { get; }
-        public KahootAnswer CorrectAnswer { get; protected set; }
+        public KahootAnswer CorrectAnswer => correctAnswer.Copy();
+        protected KahootAnswer correctAnswer;
 
         #endregion
 
