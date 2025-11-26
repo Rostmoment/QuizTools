@@ -143,9 +143,9 @@ namespace QuizTools.Kahoot
                 solver.OnQuestionAnswered += (question, success) =>
                 {
                     if (success)
-                        Logger.WriteInfoLine($"Answered to Q{Array.IndexOf(challenge.Questions, question)} [{question.Title}] successfuly!");
+                        Logger.WriteInfoLine($"Answered to Q{question.Index + 1} [{question.Title}] successfuly!");
                     else
-                        Logger.WriteInfoLine($"Something went wrong when was trying to answer Q{Array.IndexOf(challenge.Questions, question)} [{question.Title}]");
+                        Logger.WriteInfoLine($"Something went wrong when was trying to answer Q{question.Index + 1} [{question.Title}]");
                 };
                 if (answer == "n")
                     solver.Run();

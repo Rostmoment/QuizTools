@@ -60,7 +60,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 startTime = challenge.StartTime.ToUnixTimeMilliseconds(),
                 question = new
                 {
-                    index = Array.IndexOf(challenge.Questions, this),
+                    index = Index,
                     answers = new[]
                     {
                         new

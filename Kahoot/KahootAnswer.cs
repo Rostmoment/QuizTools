@@ -10,6 +10,18 @@ namespace QuizTools.Kahoot
 {
     class KahootAnswer
     {
+        public KahootAnswer(KahootAnswer original)
+        {
+            this.IsCheated = original.IsCheated;
+            this.almostCorrect = original.almostCorrect;
+            this.Question = original.Question;  
+            this.Points = original.Points;
+            this.ReactionTime = original.ReactionTime;
+            this.xy = original.xy;
+            this.value = original.value;
+            this.answers = original.answers;
+            this.inputs = original.inputs;
+        }
         private KahootAnswer(BaseKahootQuestion question)
         {
             this.Question = question;
@@ -166,21 +178,5 @@ namespace QuizTools.Kahoot
         /// If true, all validations will be removed
         /// </summary>
         public bool IsCheated { get; init; } = false;
-
-        public KahootAnswer Copy()
-        {
-            KahootAnswer result = new KahootAnswer(Question)
-            {
-                isCorrect = this.isCorrect,
-                IsCheated = this.IsCheated,
-                points = this.points,
-                reactionTime = this.reactionTime,
-                xy = this.xy,
-                value = this.value,
-                answers = this.answers,
-                inputs = this.inputs
-            };
-            return result;
-        }
     }
 }
