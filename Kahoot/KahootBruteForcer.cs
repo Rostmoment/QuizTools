@@ -103,5 +103,42 @@ namespace QuizTools.Kahoot
             }
             SaveToFile();
         }
+        public async Task BruteForceAsync()
+        {
+            bool stopRequested = false;
+            void Stop(object? sender, ConsoleCancelEventArgs e)
+            {
+                e.Cancel = true;
+                stopRequested = true;
+                Console.CancelKeyPress -= Stop;
+            }
+
+            Console.CancelKeyPress += Stop;
+            for (int i = StartPin; i <= KahootConstants.MAX_KAHOOT_PIN; i++)
+            {
+                if (stopRequested)
+                {
+                    Logger.WriteInfoLine("\nStopping brute force...");
+                    Logger.WriteInfoLine($"{found.Count} kahoot(s) was/were found!");
+                    break;
+                }
+                string pin = i.ToString("D8");
+                Logger.WriteInfo($"Checking pin {pin}...       ", "\r");
+                var (exists, game) = await Kahoot.KahootExistsAsync(pin);
+                if (exists)
+                {
+                    if (game == null)
+                        continue;
+
+                    if (game is KahootChallenge challenge)
+                    {
+                        OnKahootFound?.Invoke(challenge);
+                        found.Add(challenge);
+                    }
+                }
+            }
+            SaveToFile();
+
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 case KahootQuestionType.Quiz or KahootQuestionType.MultipleAnswersQuiz
                 or KahootQuestionType.Poll or KahootQuestionType.MultipleAnswersPoll:
                     return new KahootChoicesQuestion(json, game);
-                case KahootQuestionType.OpenEnded or KahootQuestionType.Feedback:
+                case KahootQuestionType.OpenEnded or KahootQuestionType.Feedback or KahootQuestionType.WordCloud:
                     return new KahootInputTextQuestion(json, game);
                 case KahootQuestionType.Slider:
                     return new KahootSliderQuestion(json, game);
@@ -36,7 +36,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                     return new KahootJumbleQuestion(json, game);
                 default:
                     Logger.WriteWarningLine($"Type {enumType} is not implented");
-                    return new BaseKahootQuestion(json, game);
+                    return new KahootUnknownQuestion(json);
             }
         }
         public static BaseKahootQuestion[] ArrayFromJSON(JsonElement.ArrayEnumerator json, KahootGame game)

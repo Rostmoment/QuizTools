@@ -21,7 +21,8 @@ namespace QuizTools.Kahoot
         public int Spamed { get; private set; }
         public Action<KahootPlayer> OnBotSent;
         public bool HasBaseNickname { get; }
-
+        
+        public KahootBotSpamer(KahootChallenge challenge) : this("", challenge) { }
         public KahootBotSpamer(string baseNickname, KahootChallenge challenge)
         {
             this.challenge = challenge;

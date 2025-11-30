@@ -66,7 +66,8 @@ namespace QuizTools.Kahoot.QuestionTypes
                             playerCid = player.ID,
                             isCorrect = answer.IsCorrect,
                             points = answer.Points,
-                            text = answer.Inputs[0]
+                            text = answer.Inputs[0],
+                            originalText = answer.Inputs[0]
                         }
                     }
                 }

@@ -110,7 +110,7 @@ namespace QuizTools.Kahoot
         public static void SolveKahoot()
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("Enter game link or pin");
+            Console.WriteLine("Enter game link, pin or challenge id");
             Console.ResetColor();
             Console.Write("➤ ");
             string game = Console.ReadLine();
@@ -220,6 +220,50 @@ namespace QuizTools.Kahoot
             }
             Console.ResetColor();
         }
+        public static void BruteForceKahoots()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("Enter start pin");
+            Console.ResetColor();
+            Console.Write("➤ ");
+            string startPinStr = Console.ReadLine();
+            if (!int.TryParse(startPinStr, out int startPin) || startPin > KahootConstants.MAX_KAHOOT_PIN)
+            {
+                Console.WriteLine($"Start pin must be a number between 0 and {KahootConstants.MAX_KAHOOT_PIN}");
+                return;
+            }
+            string answer = "";
+            while (answer != "y" && answer != "n")
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("Use async method (y/n)?");
+                Console.ResetColor();
+                Console.Write("➤ ");
+                answer = Console.ReadLine().ToLower();
+            }
+            KahootBruteForcer bruteForcer = new KahootBruteForcer(startPin);
+            bruteForcer.OnKahootFound += WriteInfo;
+            if (answer == "n")
+                bruteForcer.BruteForce();
+            else
+            {
+                Task task = Task.Run(bruteForcer.BruteForceAsync);
+                task.Wait();
+            }
+        }
+        public static async Task<(bool exists, KahootGame game)> KahootExistsAsync(string id)
+        {
+            if (id.Length == 7 && int.TryParse(id, out _))
+                return (await Kahoot.KahootIsPrivateAsync(id), null);
+            try
+            {
+                return (true, await KahootGame.GetAsync(id));
+            }
+            catch
+            {
+                return (false, null);
+            }
+        }
         public static bool KahootExists(string id, out KahootGame game)
         {
             game = null;
@@ -235,28 +279,19 @@ namespace QuizTools.Kahoot
                 return false;
             }
         }
+        public static async Task<bool> KahootIsPrivateAsync(string id)
+        {
+            using HttpClient httpClient = new();
+            using HttpRequestMessage request = new(HttpMethod.Get, string.Format(KahootConstants.URL_PRIVATE_KAHOOT, id));
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
         public static bool KahootIsPrivate(string id)
         {
             using HttpClient httpClient = new();
             using HttpRequestMessage request = new(HttpMethod.Get, string.Format(KahootConstants.URL_PRIVATE_KAHOOT, id));
             HttpResponseMessage response = httpClient.Send(request);
             return response.StatusCode == System.Net.HttpStatusCode.OK;
-        }
-        public static void BruteForceKahoots()
-        {
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("Enter start pin");
-            Console.ResetColor();
-            Console.Write("➤ ");
-            string startPinStr = Console.ReadLine();
-            if (!int.TryParse(startPinStr, out int startPin) || startPin > KahootConstants.MAX_KAHOOT_PIN)
-            {
-                Console.WriteLine($"Start pin must be a number between 0 and {KahootConstants.MAX_KAHOOT_PIN}");
-                return;
-            }
-            KahootBruteForcer bruteForcer = new KahootBruteForcer(startPin);
-            bruteForcer.OnKahootFound += WriteInfo;
-            bruteForcer.BruteForce();
         }
     }
 }
