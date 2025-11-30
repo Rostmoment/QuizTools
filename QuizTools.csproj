@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="4.36.0" />
-    <PackageReference Include="WebDriverManager" Version="2.17.6" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Naurok\" />
   </ItemGroup>
 

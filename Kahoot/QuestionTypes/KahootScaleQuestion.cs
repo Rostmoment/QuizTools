@@ -1,6 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -76,7 +74,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                             points = answer.Points,
                             playerId = player.Name,
                             playerCid = player.ID,
-                            choiceValue = answer.Value
+                            choiceValue = answer.Value.Value
                         }
                     }
                 }

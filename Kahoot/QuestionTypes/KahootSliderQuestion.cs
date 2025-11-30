@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +31,7 @@ namespace QuizTools.Kahoot.QuestionTypes
             End = (int)slider.GetProperty("end").GetDouble();
             Min = Start + correct % Step;
             Max = End - Step + correct % Step;
-            Tolerance = (int)(End * slider.GetProperty("tolerance").GetDouble());
+            Tolerance = (int)((End - Start) * slider.GetProperty("tolerance").GetDouble());
 
             correctAnswer = new KahootAnswer(this, correct);
         }
@@ -54,6 +53,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                 ArgumentOutOfRangeException.ThrowIfGreaterThan(answer.Value.Value, Max, nameof(answer.Value));
                 ArgumentOutOfRangeException.ThrowIfLessThan(answer.Value.Value, Min, nameof(answer.Value));
             }
+
             var payload = new
             {
                 quizId = challenge.QuizID,

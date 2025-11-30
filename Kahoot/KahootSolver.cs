@@ -1,13 +1,9 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using QuizTools.Kahoot.Exceptions;
 using QuizTools.Kahoot.Games;
 using QuizTools.Kahoot.QuestionTypes;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs.Impl;
 
 namespace QuizTools.Kahoot
 {

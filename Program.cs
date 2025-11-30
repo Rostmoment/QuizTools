@@ -13,7 +13,6 @@ namespace QuizTools
 
         private static void Main(string[] args)
         {
-            Settings.Initialize();
 
             new Category("Kahoot").AddOption("Get Info", "Shows information about kahoot", Kahoot.Kahoot.GetGamenfo)
                 .AddOption("Get Answers", "Shows answers to Kahoot", Kahoot.Kahoot.GetAnswers)
@@ -24,16 +23,12 @@ namespace QuizTools
             new Category("Vseosvita").AddOption("Solve Test", "Solves test on Vseosvita", Vseosvita.Vseosvita.SolveTest)
                 .AddOption("Spam With Bots", "Spam with bots to Vseosvita test", Vseosvita.Vseosvita.SpamWithBots);
 
-            new Category("Settings").AddOption(new DelayOption("Change Answers Delay", "Delay before answering correct ({0}-{1}ms)", Settings.Current.ChangeDelay))
-                .AddOption(new BrowserOption("Change Browser", "Used broswer: {0}", Settings.Current.ChangeBrowser))
-                .AddOption("Reset To Default", "Reset settings to default", Settings.Current.ResetToDefault);
 
             new Category("Other").AddOption("About", "Shows information about program", About)
                 .AddOption("Exit", "Exits the program", Exit);
 
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
-            Settings.Initialize();
             Start();
         }
         private static void Start()
