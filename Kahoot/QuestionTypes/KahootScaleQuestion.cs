@@ -52,6 +52,12 @@ namespace QuizTools.Kahoot.QuestionTypes
             await base.AnswerAsync(challenge, player, client, answer);
             ArgumentNullException.ThrowIfNull(answer.Value, nameof(answer.Value));
 
+            if (!answer.IsCheated)
+            {
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(answer.Value.Value, MaxValue, nameof(answer.Value));
+                ArgumentOutOfRangeException.ThrowIfLessThan(answer.Value.Value, MinValue, nameof(answer.Value));
+            }
+
             var payload = new
             {
                 quizId = challenge.QuizID,
