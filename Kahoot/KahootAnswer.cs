@@ -10,6 +10,10 @@ namespace QuizTools.Kahoot
 {
     class KahootAnswer
     {
+        /// <summary>
+        /// Creates copy of instance
+        /// </summary>
+        /// <param name="original"></param>
         public KahootAnswer(KahootAnswer original)
         {
             this.IsCheated = original.IsCheated;
@@ -28,23 +32,59 @@ namespace QuizTools.Kahoot
             this.Points = question.MaxPoints;
             this.almostCorrect = false;
         }
+        #region pin question
+        /// <summary>
+        /// Used for <see cref="KahootPinQuestion"/>
+        /// </summary>
+        /// <param name="question">Instance of question</param>
+        /// <param name="x">X where pin should be dropped</param>
+        /// <param name="y">Y where pin should be dropped</param>
         public KahootAnswer(BaseKahootQuestion question, float x, float y) : this(question, new Vector2(x, y)) { }
+        /// <summary>
+        /// Used for <see cref="KahootPinQuestion"/>
+        /// </summary>
+        /// <param name="question">Instance of question</param>
+        /// <param name="answer">Coordinates of where pin should be dropped</param>
         public KahootAnswer(BaseKahootQuestion question, Vector2? answer) : this(question)
         {
             this.xy = answer;
         }
-        public KahootAnswer(BaseKahootQuestion question, params string[] answer) : this(question)
+        #endregion
+        #region questions with text input
+        /// <summary>
+        /// Used for <see cref="KahootInputTextQuestion"/>
+        /// </summary>
+        /// <param name="question">Instance of question</param>
+        /// <param name="answer">Array of answers. Will use first element from array if question needs only 1 answer</param>
+        public KahootAnswer(BaseKahootQuestion question, params string[] inputs) : this(question)
         {
-            this.inputs = answer;
+            this.inputs = inputs;
         }
+        #endregion
+        #region questions where answer is number
+        /// <summary>
+        /// Used for <see cref="KahootSliderQuestion"/> and <see cref="KahootScaleQuestion"/>
+        /// </summary>
+        /// <param name="question">Instance of question</param>
+        /// <param name="value">Number that needs to be sent as answer</param>
         public KahootAnswer(BaseKahootQuestion question, int value) : this(question)
         {
             this.value = value;
         }
+        #endregion
+        #region questions where answer is order or choices
+        /// <summary>
+        /// Used for <see cref="KahootChoicesQuestion"/> and <see cref="KahootJumbleQuestion"/>
+        /// If question is <see cref="KahootChoicesQuestion"/>, answers at indexes from <see cref="KahootAnswer.Answers"/> will be used
+        /// If question is <see cref="KahootJumbleQuestion"/>, order of answers from <see cref="KahootAnswer.Answers"/> will be used (order starts from 0)
+        /// </summary>
+        /// <param name="question">Instance of question</param>
+        /// <param name="answers">Indexes of answers</param>
         public KahootAnswer(BaseKahootQuestion question, params int[] answers) : this(question)
         {
             this.answers = answers;
         }
+        #endregion
 
         public BaseKahootQuestion Question { get; }
 
@@ -55,7 +95,7 @@ namespace QuizTools.Kahoot
         private Vector2? xy;
 
         /// <summary>
-        /// Used for <see cref="KahootChoicesQuestion"/>
+        /// Used for <see cref="KahootChoicesQuestion"/> and <see cref="KahootJumbleQuestion"/>
         /// </summary>
         public int[]? Answers => answers?.ToArray();
         private int[]? answers;
@@ -67,7 +107,7 @@ namespace QuizTools.Kahoot
         private int? value;
 
         /// <summary>
-        /// Used for <see cref="KahootJumbleQuestion"/> and <see cref="KahootInputTextQuestion"/>
+        /// Used for <see cref="KahootInputTextQuestion"/>
         /// </summary>
         public string[]? Inputs => inputs?.ToArray();
         private string[]? inputs;

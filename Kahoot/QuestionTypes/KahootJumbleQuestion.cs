@@ -12,17 +12,21 @@ namespace QuizTools.Kahoot.QuestionTypes
 {
     class KahootJumbleQuestion : BaseKahootQuestion
     {
+        public string[] Choices => choices.ToArray();
+        private string[] choices;
         public KahootJumbleQuestion(JsonElement jSON, KahootGame game) : base(jSON, game)
         {
             List<string> correctOrder = new();
-            if (jSON.TryGetProperty("choices", out JsonElement choices))
+            if (jSON.TryGetProperty("choices", out JsonElement answers))
             {
-                foreach (JsonElement choice in choices.EnumerateArray())
+                foreach (JsonElement choice in answers.EnumerateArray())
                 {
                     correctOrder.Add(WebUtility.HtmlDecode(choice.GetProperty("answer").GetString()));
                 }
             }
-            correctAnswer = new KahootAnswer(this, correctOrder.ToArray());
+
+            choices = correctOrder.ToArray();
+            correctAnswer = new KahootAnswer(this, Enumerable.Range(0, choices.Length).ToArray());
         }
 
         public override void WriteAnswers()
@@ -34,10 +38,18 @@ namespace QuizTools.Kahoot.QuestionTypes
         public override async Task<bool> AnswerAsync(KahootChallenge challenge, KahootPlayer player, HttpClient client, KahootAnswer answer)
         {
             await base.AnswerAsync(challenge, player, client, answer);
-            ArgumentNullException.ThrowIfNull(answer.Inputs, nameof(answer.Inputs));
+            ArgumentNullException.ThrowIfNull(answer.Answers, nameof(answer.Answers));
 
-            if (answer.Inputs.Length == 0)
-                throw new ArithmeticException("Array of answers should not be empty");
+            if (answer.Answers.Length == 0)
+                throw new ArgumentException("Array of answers should not be empty");
+
+            int[] indexes = answer.Answers;
+            if (!answer.IsCheated)
+                indexes = indexes.Distinct().ToArray();
+
+            if (indexes.Length != correctAnswer.Answers.Length)
+                throw new ArgumentException($"Expected {correctAnswer.Answers.Length} answers, but received {indexes.Length}.");
+
 
             var payload = new
             {
@@ -57,7 +69,7 @@ namespace QuizTools.Kahoot.QuestionTypes
                             playerCid = player.ID,
                             isCorrect = true,
                             points = answer.Points,
-                            selectedJumbleOrder = answer.Inputs.Select((x, index) => index).ToArray()
+                            selectedJumbleOrder = indexes
                         }
                     }
                 }
