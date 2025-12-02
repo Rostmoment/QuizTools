@@ -19,12 +19,16 @@ namespace QuizTools.Kahoot.Games
         public string Name { get; }
         public string QuizID { get; }
         public string Language { get; }
+
         public DateTime CreatedTime { get; }
         public DateTime ModifiedTime { get; }
+
         public BaseKahootQuestion[] Questions { get; }
         public KahootUser Creator { get; }
+
         public int NumberOfQuestions => Questions.Length;
         public int TotalMaxPoints => Questions.Sum(q => q.MaxPoints);
+
         public string QuizJSONLink => string.Format(KahootConstants.URL_QUIZ_ID, QuizID);
         public string DetailsLink => string.Format(KahootConstants.URL_KAHOOT_DETAILS, QuizID);
 
@@ -137,5 +141,40 @@ namespace QuizTools.Kahoot.Games
         }
         #endregion
 
+        public KahootChallenge StartChallenge(string bearerToken, DateTime endTime, HttpClient client = null) => StartChallengeAsync(bearerToken, endTime, client).Result;
+        public async Task<KahootChallenge> StartChallengeAsync(string bearerToken, DateTime endTime, HttpClient client = null)
+        {
+            client ??= new HttpClient();
+            var payload = new
+            {
+                endTime = endTime.ToUnixTimeMilliseconds(),
+                quizId = QuizID,
+                game_options = new
+                {
+                    participant_id = false,
+                    participant_id_placeholder = "",
+                    premium_branding = false,
+                    randomize_questions = false,
+                    randomize_answers = true,
+                    smart_practice = false,
+                    question_timer = false,
+                    namerator = false,
+                    hide_lobby_list = false,
+                    hide_scoreboard = false,
+                    hide_podium = false,
+                    anonymous_mode = false,
+                    child_safe_open_ended_question_format = false,
+                    login_required = false,
+                    nano_format = false
+                }
+            };
+            string json = JsonSerializer.Serialize(payload);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, KahootConstants.URL_CHALLENGE_NO_ARGUMENT);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            request.Headers.Add("Authorization", $"Bearer {bearerToken}");
+            HttpResponseMessage response = await client.SendAsync(request);
+            JsonDocument document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return await KahootChallenge.GetAsync(document.RootElement.GetProperty("challengeId").GetString());
+        }
     }
 }

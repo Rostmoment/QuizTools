@@ -32,33 +32,11 @@ namespace QuizTools.Kahoot
 
         public JsonElement JSON { get; }
 
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(JSON);
-        }
 
-
-        #region stupid long constructor
-        private KahootGameOptions(
-            bool randomizeAnswers,
-            bool hideLobbyList,
-            bool hidePlayerRank,
-            bool hidePodium,
-            bool hideScoreboard,
-            bool questionTimer,
-            bool participantId,
-            bool smartPractice,
-            bool premiumBranding,
-            bool sendWrongAnswers,
-            bool loginRequired,
-            bool ghostMode,
-            bool namerator,
-            int scoringVersion,
-            bool groupChallenge,
-            bool requiresPinCode,
-            bool onboardingChallenge,
-            bool childSafe,
-            JsonElement json)
+        private KahootGameOptions(bool randomizeAnswers, bool hideLobbyList, bool hidePlayerRank, bool hidePodium, bool hideScoreboard,
+                bool questionTimer, bool participantId, bool smartPractice, bool premiumBranding, bool sendWrongAnswers,
+                bool loginRequired, bool ghostMode, bool namerator, int scoringVersion, bool groupChallenge,
+                bool requiresPinCode, bool onboardingChallenge, bool childSafe, JsonElement json)
         {
             RandomizeAnswers = randomizeAnswers;
             HideLobbyList = hideLobbyList;
@@ -88,7 +66,6 @@ namespace QuizTools.Kahoot
 
             JSON = json;
         }
-        #endregion
 
 
         public static KahootGameOptions FromJSON(JsonElement root)
@@ -96,27 +73,35 @@ namespace QuizTools.Kahoot
             if (!root.TryGetProperty("game_options", out JsonElement element))
                 return null;
 
-            return new(
-                element.GetProperty("randomize_answers").GetBoolean(),
-                element.GetProperty("hide_lobby_list").GetBoolean(),
-                element.GetProperty("hide_player_rank").GetBoolean(),
-                element.GetProperty("hide_podium").GetBoolean(),
-                element.GetProperty("hide_scoreboard").GetBoolean(),
-                element.GetProperty("question_timer").GetBoolean(),
-                element.GetProperty("participant_id").GetBoolean(),
-                element.GetProperty("smart_practice").GetBoolean(),
-                element.GetProperty("premium_branding").GetBoolean(),
-                element.GetProperty("send_players_incorrect_text_answers").GetBoolean(),
-                element.GetProperty("login_required").GetBoolean(),
-                element.GetProperty("ghost_mode").GetBoolean(),
-                element.GetProperty("namerator").GetBoolean(),
-                element.GetProperty("scoring_version").GetInt32(),
-                element.GetProperty("group_challenge").GetBoolean(),
-                element.GetProperty("require_pin_code").GetBoolean(),
-                element.GetProperty("onboarding_challenge").GetBoolean(),
-                element.GetProperty("child_safe_open_ended_question_format").GetBoolean(),
-                element
-            );
+            try
+            {
+                return new(
+                    element.GetProperty("randomize_answers").GetBoolean(),
+                    element.GetProperty("hide_lobby_list").GetBoolean(),
+                    element.GetProperty("hide_player_rank").GetBoolean(),
+                    element.GetProperty("hide_podium").GetBoolean(),
+                    element.GetProperty("hide_scoreboard").GetBoolean(),
+                    element.GetProperty("question_timer").GetBoolean(),
+                    element.GetProperty("participant_id").GetBoolean(),
+                    element.GetProperty("smart_practice").GetBoolean(),
+                    element.GetProperty("premium_branding").GetBoolean(),
+                    element.GetProperty("send_players_incorrect_text_answers").GetBoolean(),
+                    element.GetProperty("login_required").GetBoolean(),
+                    element.GetProperty("ghost_mode").GetBoolean(),
+                    element.GetProperty("namerator").GetBoolean(),
+                    element.GetProperty("scoring_version").GetInt32(),
+                    element.GetProperty("group_challenge").GetBoolean(),
+                    element.GetProperty("require_pin_code").GetBoolean(),
+                    element.GetProperty("onboarding_challenge").GetBoolean(),
+                    element.GetProperty("child_safe_open_ended_question_format").GetBoolean(),
+                    element
+                );
+            }
+            catch (Exception e)
+            {
+                Logger.WriteErrorLine(e);
+                return null;
+            }
         }
 
     }

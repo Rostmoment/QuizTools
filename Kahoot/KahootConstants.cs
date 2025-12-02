@@ -10,6 +10,7 @@ namespace QuizTools.Kahoot
     {
         public const string URL_QUIZ_ID = "https://create.kahoot.it/rest/kahoots/{0}";
         public const string URL_CHALLENGE = "https://kahoot.it/rest/challenges/{0}";
+        public const string URL_CHALLENGE_NO_ARGUMENT = "https://kahoot.it/rest/challenges";
         public const string URL_CHALLENGE_PIN = "https://kahoot.it/rest/challenges/pin/{0}";
         public const string URL_JOIN_KAHOOT_BY_API = "https://kahoot.it/rest/challenges/{0}/join/?nickname={1}";
         public const string URL_PRIVATE_KAHOOT = "https://play.kahoot.it/reserve/session/{0}";
