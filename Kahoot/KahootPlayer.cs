@@ -27,6 +27,15 @@ namespace QuizTools.Kahoot
         }
 
         public override string ToString() => $"{Name} [{ID}]";
-        
+        public override bool Equals(object? obj)
+        {
+            if (obj is KahootPlayer other)
+            {
+                return other.ID == ID && other.Challenge.Equals(Challenge);
+            }
+            return false;
+        }
+        public static bool operator ==(KahootPlayer a, KahootPlayer b) => a.Equals(b);
+        public static bool operator !=(KahootPlayer a, KahootPlayer b) => !a.Equals(b);
     }
 }

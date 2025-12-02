@@ -43,30 +43,7 @@ namespace QuizTools.Kahoot.Games
         public int MaxPlayers { get; }
         public KahootGameOptions GameOptions { get; }
         public KahootUser Host { get; }
-        public KahootPlayer[] Players
-        {
-            get
-            {
-                List<KahootPlayer> players = new();
-
-                using HttpClient httpClient = new();
-                using HttpRequestMessage request = new(HttpMethod.Get, AnswersLink);
-                HttpResponseMessage response = httpClient.Send(request);
-                using JsonDocument document = JsonDocument.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-                JsonElement root = document.RootElement;
-                if (root.TryGetProperty("challenge", out JsonElement challenge) && challenge.TryGetProperty("challengeUsersList", out JsonElement list))
-                {
-                    foreach (JsonElement player in list.EnumerateArray())
-                    {
-                        players.Add(new KahootPlayer(
-                            player.GetProperty("nickname").GetString(),
-                            player.GetProperty("playerCId").GetInt64(),
-                            this));
-                    }
-                }
-                return players.ToArray();
-            }
-        }
+      
         public string ChallengeIDJSONLink => string.Format(KahootConstants.URL_CHALLENGE, ChallengeID);
         public string PinJSONLink => string.Format(KahootConstants.URL_CHALLENGE_PIN, Pin);
         public string JoinLink => string.Format(KahootConstants.URL_JOIN_CHALLENGE, Pin, ChallengeID);
@@ -231,6 +208,51 @@ namespace QuizTools.Kahoot.Games
             }
             return new KahootPlayer(nickname, json.GetProperty("playerCid").GetInt64(), this);
         }
+
+        public KahootPlayer[] GetPlayers(HttpClient client = null)
+        {
+            List<KahootPlayer> players = new(MaxPlayers);
+            client ??= new HttpClient();
+
+            using HttpRequestMessage request = new(HttpMethod.Get, AnswersLink);
+            HttpResponseMessage response = client.Send(request);
+            using JsonDocument document = JsonDocument.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            JsonElement root = document.RootElement;
+            if (root.TryGetProperty("challenge", out JsonElement challenge) && challenge.TryGetProperty("challengeUsersList", out JsonElement list))
+            {
+                foreach (JsonElement player in list.EnumerateArray())
+                {
+                    players.Add(new KahootPlayer(
+                        player.GetProperty("nickname").GetString(),
+                        player.GetProperty("playerCId").GetInt64(),
+                        this));
+                }
+            }
+            return players.ToArray();
+        }
+
+        public async Task<KahootPlayer[]> GetPlayersAsync(HttpClient client = null)
+        {
+            List<KahootPlayer> players = new(MaxPlayers);
+            client ??= new HttpClient();
+
+            using HttpRequestMessage request = new(HttpMethod.Get, AnswersLink);
+            HttpResponseMessage response = await client.SendAsync(request);
+            using JsonDocument document = JsonDocument.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            JsonElement root = document.RootElement;
+            if (root.TryGetProperty("challenge", out JsonElement challenge) && challenge.TryGetProperty("challengeUsersList", out JsonElement list))
+            {
+                foreach (JsonElement player in list.EnumerateArray())
+                {
+                    players.Add(new KahootPlayer(
+                        player.GetProperty("nickname").GetString(),
+                        player.GetProperty("playerCId").GetInt64(),
+                        this));
+                }
+            }
+            return players.ToArray();
+        }
+
         #endregion
     }
 }
