@@ -15,5 +15,9 @@ namespace QuizTools.Kahoot.QuestionTypes
         {
             JSON = jSON;
         }
+        public override void WriteAnswers()
+        {
+            throw new NotImplementedException("Cannot write answer to unknown question");
+        }
     }
 }

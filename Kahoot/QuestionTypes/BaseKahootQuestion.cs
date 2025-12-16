@@ -10,7 +10,7 @@ using QuizTools.Kahoot.Games;
 
 namespace QuizTools.Kahoot.QuestionTypes
 {
-    class BaseKahootQuestion
+    abstract class BaseKahootQuestion
     {
         #region initialization
         public BaseKahootQuestion() { }
@@ -70,10 +70,6 @@ namespace QuizTools.Kahoot.QuestionTypes
             return false;
         }
 
-        public virtual void WriteAnswers()
-        {
-
-        }
-
+        public abstract void WriteAnswers();
     }
 }
