@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using QuizTools.GeneralUtils;
+﻿using QuizTools.GeneralUtils;
 using QuizTools.Kahoot.Exceptions;
 using QuizTools.Kahoot.Games;
 using QuizTools.Kahoot.QuestionTypes;
@@ -29,13 +22,14 @@ namespace QuizTools.Kahoot
 
             if (game is KahootChallenge challenge)
             {
+                KahootPlayer[] players = challenge.GetPlayers();
                 text += $"\nTitle: {challenge.Title.MakeHyperlink(challenge.JoinLink)}" +
                     $"\nChallenge ID: {challenge.ChallengeID.MakeHyperlink(challenge.ChallengeIDJSONLink)}" +
                     $"\nPin: {challenge.Pin.MakeHyperlink(challenge.PinJSONLink)}" +
                     $"\nStart: {challenge.StartTime}" +
                     $"\nEnd: {challenge.EndTime}" +
                     $"\nMax players: {challenge.MaxPlayers}" +
-                    $"\nPlayers ({challenge.Players.Length}): {challenge.Players.ToSeparatedString(", ")}" +
+                    $"\nPlayers ({players.Length}): {players.ToSeparatedString(", ")}" +
                     $"\nHost: {challenge.Host.ToString().MakeHyperlink(challenge.Host.Link)}";
             }
 
