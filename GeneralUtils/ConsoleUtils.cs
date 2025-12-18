@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuizTools.GeneralUtils
 {
-    class ConsoleUtils
+    public static class ConsoleUtils
     {
+        private const string ESC = "\u001B";
         public static ConsoleColor SavedForeground
         {
             get => saved.fg;
@@ -25,53 +26,17 @@ namespace QuizTools.GeneralUtils
 
         public static void DeleteLastSymbols(int toDelete)
         {
-            if (toDelete <= 0) return;
-
-            int currentLeft = Console.CursorLeft;
-            int currentTop = Console.CursorTop;
-
-            if (currentLeft >= toDelete)
-            {
-                Console.SetCursorPosition(currentLeft - toDelete, currentTop);
-                Console.Write(new string(' ', toDelete));
-                Console.SetCursorPosition(currentLeft - toDelete, currentTop);
-            }
-            else
-            {
-                int remainingDelete = toDelete;
-                int targetLeft = currentLeft;
-                int targetTop = currentTop;
-
-                while (remainingDelete > 0 && targetTop >= 0)
-                {
-                    if (targetLeft >= remainingDelete)
-                    {
-                        targetLeft -= remainingDelete;
-                        remainingDelete = 0;
-                    }
-                    else
-                    {
-                        remainingDelete -= targetLeft;
-                        targetTop--;
-                        targetLeft = Console.BufferWidth - 1;
-                    }
-                }
-
-                if (targetTop >= 0)
-                {
-                    Console.SetCursorPosition(targetLeft, targetTop);
-                    Console.Write(new string(' ', toDelete));
-                    Console.SetCursorPosition(targetLeft, targetTop);
-                }
-            }
+            for (int i = 0; i < toDelete; i++)
+                DeleteLastCharacter();
         }
         public static void DeleteLastCharacter()
         {
             if (Console.CursorLeft > 0)
             {
-                Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                Console.SetCursorPosition(Console.CursorLeft - 2, Console.CursorTop);
                 Console.Write(' ');
                 Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+
             }
         }
         public static void Center2Strings(string str1, string str2, string divider = "||")
@@ -79,6 +44,12 @@ namespace QuizTools.GeneralUtils
             int padding = (Console.WindowWidth / 2) - str1.Length;
             if (padding < 0) padding = 0; 
             Console.WriteLine(str1 + new string(' ', padding) + divider + " " + str2);
+        }
+        public static void ClearCurrentConsoleLine()
+        {
+            StringBuilder s = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+                s.Append(i);
         }
         public static void WriteToEndOfLine(string text, string prefix = null, string postfix = null)
         {
@@ -117,5 +88,9 @@ namespace QuizTools.GeneralUtils
             Console.ForegroundColor = SavedForeground;
             Console.BackgroundColor = SavedBackground;
         }
+
+        public static string ColorRgb(this string text, byte r, byte g, byte b) => $"{ESC}[38;2;{r};{g};{b}m{text}{ESC}[0m";
+        public static string MakeHyperlink(this string text, string link) => $"{ESC}]8;;{link}{ESC}\\{text}{ESC}]8;;{ESC}\\";
+        
     }
 }

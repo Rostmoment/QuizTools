@@ -35,15 +35,7 @@ namespace QuizTools
         {
             Console.Clear();
             Console.Title = GeneralConstants.NAME;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("" +
-                                "░██████╗░██╗░░░██╗██╗███████╗      ████████╗░█████╗░░█████╗░██╗░░░░░░██████╗" + "\n" +
-                                "██╔═══██╗██║░░░██║██║╚════██║      ╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░██╔════╝" + "\n" +
-                                "██║██╗██║██║░░░██║██║░░███╔═╝      ░░░██║░░░██║░░██║██║░░██║██║░░░░░╚█████╗░" + "\n" +
-                                "╚██████╔╝██║░░░██║██║██╔══╝░░      ░░░██║░░░██║░░██║██║░░██║██║░░░░░░╚═══██╗" + "\n" +
-                                "░╚═██╔═╝░╚██████╔╝██║███████╗      ░░░██║░░░╚█████╔╝╚█████╔╝███████╗██████╔╝" + "\n" +
-                                "░░░╚═╝░░░░╚═════╝░╚═╝╚══════╝      ░░░╚═╝░░░░╚════╝░░╚════╝░╚══════╝╚═════╝░");
-            Console.ResetColor();
+            Banner();
             ConsoleUtils.WriteToEndOfLine("=");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Welcome to {GeneralConstants.NAME}! Type number of option that you want to do and then press enter!");
@@ -65,6 +57,7 @@ namespace QuizTools
 
             ConsoleUtils.WriteToEndOfLine("=");
             Console.Write("➤ ");
+            ConsoleUtils.DeleteLastCharacter();
             string? answer = Console.ReadLine();
             if (answer == null)
                 Start();
@@ -78,9 +71,21 @@ namespace QuizTools
 
             Console.Title = GeneralConstants.NAME;
             Console.WriteLine("Press Any Key To Continue");
+            ConsoleUtils.DeleteLastCharacter();
             Console.ReadKey();
 
             Start();
+        }
+        private static void Banner()
+        {
+            Console.WriteLine("" +
+                                "░██████╗░██╗░░░██╗██╗███████╗      ████████╗░█████╗░░█████╗░██╗░░░░░░██████╗".ColorRgb(42, 245, 153) + "\n" +
+                                "██╔═══██╗██║░░░██║██║╚════██║      ╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░██╔════╝".ColorRgb(35, 228, 173) + "\n" +
+                                "██║██╗██║██║░░░██║██║░░███╔═╝      ░░░██║░░░██║░░██║██║░░██║██║░░░░░╚█████╗░".ColorRgb(27, 215, 188) + "\n" +
+                                "╚██████╔╝██║░░░██║██║██╔══╝░░      ░░░██║░░░██║░░██║██║░░██║██║░░░░░░╚═══██╗".ColorRgb(19, 201, 204) + "\n" +
+                                "░╚═██╔═╝░╚██████╔╝██║███████╗      ░░░██║░░░╚█████╔╝╚█████╔╝███████╗██████╔╝".ColorRgb(15, 190, 217) + "\n" +
+                                "░░░╚═╝░░░░╚═════╝░╚═╝╚══════╝      ░░░╚═╝░░░░╚════╝░░╚════╝░╚══════╝╚═════╝░".ColorRgb(8, 180, 230));
+            Console.ResetColor();
         }
         private static void About()
         {
