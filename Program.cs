@@ -58,7 +58,6 @@ namespace QuizTools
 
             ConsoleUtils.WriteToEndOfLine("=");
             Console.Write("➤ ");
-            ConsoleUtils.DeleteLastCharacter();
             string? answer = Console.ReadLine();
             if (answer == null)
                 Start();
@@ -72,7 +71,6 @@ namespace QuizTools
 
             Console.Title = GeneralConstants.NAME;
             Console.WriteLine("Press Any Key To Continue");
-            ConsoleUtils.DeleteLastCharacter();
             Console.ReadKey();
 
             Start();
