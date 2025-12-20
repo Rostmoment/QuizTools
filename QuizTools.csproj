@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Naurok\" />
+    <Compile Remove="Naurok\**" />
+    <EmbeddedResource Remove="Naurok\**" />
+    <None Remove="Naurok\**" />
   </ItemGroup>
 
 </Project>

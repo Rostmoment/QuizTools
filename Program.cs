@@ -25,7 +25,8 @@ namespace QuizTools
 
 
             new Category("Other").AddOption("About", "Shows information about program", About)
-                .AddOption("Exit", "Exits the program", Exit);
+                .AddOption("Open Settings Folder", "", Settings.OpenFolder)
+                .AddOption("Exit", "Exits The Program", Exit);
 
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;

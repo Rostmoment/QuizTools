@@ -45,12 +45,6 @@ namespace QuizTools.GeneralUtils
             if (padding < 0) padding = 0; 
             Console.WriteLine(str1 + new string(' ', padding) + divider + " " + str2);
         }
-        public static void ClearCurrentConsoleLine()
-        {
-            StringBuilder s = new StringBuilder();
-            for (int i = 0; i < 10; i++)
-                s.Append(i);
-        }
         public static void WriteToEndOfLine(string text, string prefix = null, string postfix = null)
         {
             StringBuilder b = new StringBuilder();

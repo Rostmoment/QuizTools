@@ -30,7 +30,7 @@ namespace QuizTools.Kahoot.QuestionTypes
         public override void WriteAnswers()
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            if (CorrectAnswer.Inputs.ArrayIsNullOrEmpty())
+            if (CorrectAnswer == null ||  CorrectAnswer!.Inputs!.ArrayIsNullOrEmpty())
             {
                 Console.WriteLine("No answers!");
                 return;

@@ -80,7 +80,7 @@ namespace QuizTools.Kahoot
         /// </summary>
         /// <param name="question">Instance of question</param>
         /// <param name="answers">Indexes of answers</param>
-        public KahootAnswer(BaseKahootQuestion question, params int[] answers) : this(question)
+        public KahootAnswer(BaseKahootQuestion question, int[] answers) : this(question)
         {
             this.answers = answers;
         }
