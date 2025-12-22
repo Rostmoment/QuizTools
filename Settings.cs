@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizTools.GeneralUtils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,6 +24,11 @@ namespace QuizTools
 
         public static string DirectoryPath => Path.GetDirectoryName(FilePath)!;
         public static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RostMoment", "QuizTools", "Settings.json");
+
+        [SerializableSetting("LogoGradientFrom")]
+        public static string LogoGradientFrom { get; set; } = "#710303";
+        [SerializableSetting("LogoGradientTo")]
+        public static string LogoGradientTo { get; set; } = "#3c0346";
 
         public static void Save()
         {
@@ -64,6 +70,35 @@ namespace QuizTools
             Save();
         }
 
+
+        public static void SetLogoGradient()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("Enter the starting hex color for logo gradient");
+            Console.ResetColor();
+            ConsoleUtils.WriteArrow();
+
+            string from = Console.ReadLine()!;
+            if (!ColorHelper.IsValidHex(from))
+            {
+                Logger.WriteErrorLine("Invalid Hex Color");
+                return;
+            }
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("Enter the ending hex color for logo gradient");
+            Console.ResetColor();
+            ConsoleUtils.WriteArrow();
+            string to = Console.ReadLine()!;
+            if (!ColorHelper.IsValidHex(to))
+            {
+                Logger.WriteErrorLine("Invalid Hex Color");
+                return;
+            }
+            LogoGradientFrom = from;
+            LogoGradientTo = to;
+            Save();
+        }
         public static void OpenFolder()
         {
             Process.Start("explorer.exe", DirectoryPath);

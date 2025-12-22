@@ -7,10 +7,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Naurok\**" />
-    <EmbeddedResource Remove="Naurok\**" />
-    <None Remove="Naurok\**" />
-  </ItemGroup>
-
 </Project>

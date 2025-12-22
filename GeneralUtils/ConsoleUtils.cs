@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace QuizTools.GeneralUtils
@@ -20,6 +23,14 @@ namespace QuizTools.GeneralUtils
             set => saved.bg = value;
         }
         private static (ConsoleColor fg, ConsoleColor bg) saved;
+
+        public static void WriteArrow(bool newLine = false)
+        {
+            if (newLine)
+                Console.WriteLine("➤ ");
+            else
+                Console.Write("➤ ");
+        }
 
         public static void WriteInCenter(string text) =>
             Console.WriteLine(string.Format("{0," + ((Console.WindowWidth / 2) + (text.Length / 2)) + "}", text));
@@ -82,7 +93,12 @@ namespace QuizTools.GeneralUtils
             Console.ForegroundColor = SavedForeground;
             Console.BackgroundColor = SavedBackground;
         }
-
+        public static string ColorHex(this string text, string hex)
+        {
+            hex = hex.Replace("#", "");
+            (byte r, byte g, byte b) = ColorHelper.HexToRgb(hex);
+            return text.ColorRgb(r, g, b);
+        }
         public static string ColorRgb(this string text, byte r, byte g, byte b) => $"{ESC}[38;2;{r};{g};{b}m{text}{ESC}[0m";
         public static string MakeHyperlink(this string text, string link) => $"{ESC}]8;;{link}{ESC}\\{text}{ESC}]8;;{ESC}\\";
         

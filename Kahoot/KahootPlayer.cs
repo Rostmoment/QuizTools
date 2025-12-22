@@ -35,6 +35,8 @@ namespace QuizTools.Kahoot
             }
             return false;
         }
+        public override int GetHashCode() => HashCode.Combine(ID, Challenge, Name);
+
         public static bool operator ==(KahootPlayer a, KahootPlayer b) => a.Equals(b);
         public static bool operator !=(KahootPlayer a, KahootPlayer b) => !a.Equals(b);
     }

@@ -165,8 +165,7 @@ namespace QuizTools.Kahoot.Games
             if (nickname.Length > KahootConstants.MAX_NICKNAME_LENGHT)
                 throw new NicknameIsTooLongException(nickname);
 
-            if (client == null)
-                throw new ArgumentNullException(nameof(client));
+            ArgumentNullException.ThrowIfNull(client);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, string.Format(KahootConstants.URL_JOIN_KAHOOT_BY_API, ChallengeID, nickname));
             HttpResponseMessage response = client.Send(request);
@@ -190,8 +189,7 @@ namespace QuizTools.Kahoot.Games
             if (nickname.Length > KahootConstants.MAX_NICKNAME_LENGHT)
                 throw new NicknameIsTooLongException(nickname);
 
-            if (client == null)
-                throw new ArgumentNullException(nameof(client));
+            ArgumentNullException.ThrowIfNull(client);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, string.Format(KahootConstants.URL_JOIN_KAHOOT_BY_API, ChallengeID, nickname));
             HttpResponseMessage response = await client.SendAsync(request);

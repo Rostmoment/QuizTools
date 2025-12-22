@@ -1,9 +1,10 @@
-﻿using QuizTools.GeneralUtils;
+﻿using QuizTools.Categories;
+using QuizTools.GeneralUtils;
+using QuizTools.Kahoot;
+using System.Drawing;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
-using QuizTools.Kahoot;
-using QuizTools.Categories;
 
 namespace QuizTools
 {
@@ -13,7 +14,7 @@ namespace QuizTools
 
         private static void Main(string[] args)
         {
-
+            Settings.Load();
             new Category("Kahoot").AddOption("Get Info", "Shows information about kahoot", Kahoot.Kahoot.GetGamenfo)
                 .AddOption("Get Answers", "Shows answers to Kahoot", Kahoot.Kahoot.GetAnswers)
                 .AddOption("Solve Kahoot", "Solves test on Kahoot", Kahoot.Kahoot.SolveKahoot)
@@ -23,9 +24,10 @@ namespace QuizTools
             new Category("Vseosvita").AddOption("Solve Test", "Solves test on Vseosvita", Vseosvita.Vseosvita.SolveTest)
                 .AddOption("Spam With Bots", "Spam with bots to Vseosvita test", Vseosvita.Vseosvita.SpamWithBots);
 
+            new Category("Settings").AddOption(new LogoGradientOption("Change Logo Gradient", "{0} --- {1}", Settings.SetLogoGradient))
+                .AddOption("Open Settings Folder", "", Settings.OpenFolder);
 
             new Category("Other").AddOption("About", "Shows information about program", About)
-                .AddOption("Open Settings Folder", "", Settings.OpenFolder)
                 .AddOption("Exit", "Exits The Program", Exit);
 
             Console.InputEncoding = Encoding.UTF8;
@@ -57,7 +59,7 @@ namespace QuizTools
             Console.ResetColor();
 
             ConsoleUtils.WriteToEndOfLine("=");
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string? answer = Console.ReadLine();
             if (answer == null)
                 Start();
@@ -77,15 +79,17 @@ namespace QuizTools
         }
         private static void Banner()
         {
+            List<string> colors = ColorHelper.GetGradient(Settings.LogoGradientFrom, Settings.LogoGradientTo, 6);
             Console.WriteLine("" +
-                                "░██████╗░██╗░░░██╗██╗███████╗      ████████╗░█████╗░░█████╗░██╗░░░░░░██████╗".ColorRgb(42, 245, 153) + "\n" +
-                                "██╔═══██╗██║░░░██║██║╚════██║      ╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░██╔════╝".ColorRgb(35, 228, 173) + "\n" +
-                                "██║██╗██║██║░░░██║██║░░███╔═╝      ░░░██║░░░██║░░██║██║░░██║██║░░░░░╚█████╗░".ColorRgb(27, 215, 188) + "\n" +
-                                "╚██████╔╝██║░░░██║██║██╔══╝░░      ░░░██║░░░██║░░██║██║░░██║██║░░░░░░╚═══██╗".ColorRgb(19, 201, 204) + "\n" +
-                                "░╚═██╔═╝░╚██████╔╝██║███████╗      ░░░██║░░░╚█████╔╝╚█████╔╝███████╗██████╔╝".ColorRgb(15, 190, 217) + "\n" +
-                                "░░░╚═╝░░░░╚═════╝░╚═╝╚══════╝      ░░░╚═╝░░░░╚════╝░░╚════╝░╚══════╝╚═════╝░".ColorRgb(8, 180, 230));
+                                "░██████╗░██╗░░░██╗██╗███████╗      ████████╗░█████╗░░█████╗░██╗░░░░░░██████╗".ColorHex(colors[0]) + "\n" +
+                                "██╔═══██╗██║░░░██║██║╚════██║      ╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░██╔════╝".ColorHex(colors[1]) + "\n" +
+                                "██║██╗██║██║░░░██║██║░░███╔═╝      ░░░██║░░░██║░░██║██║░░██║██║░░░░░╚█████╗░".ColorHex(colors[2]) + "\n" +
+                                "╚██████╔╝██║░░░██║██║██╔══╝░░      ░░░██║░░░██║░░██║██║░░██║██║░░░░░░╚═══██╗".ColorHex(colors[3]) + "\n" +
+                                "░╚═██╔═╝░╚██████╔╝██║███████╗      ░░░██║░░░╚█████╔╝╚█████╔╝███████╗██████╔╝".ColorHex(colors[4]) + "\n" +
+                                "░░░╚═╝░░░░╚═════╝░╚═╝╚══════╝      ░░░╚═╝░░░░╚════╝░░╚════╝░╚══════╝╚═════╝░".ColorHex(colors[5]));
             Console.ResetColor();
         }
+
         private static void About()
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;

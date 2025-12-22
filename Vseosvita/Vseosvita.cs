@@ -1,4 +1,5 @@
-﻿using QuizTools.Vseosvita.QuestionTypes;
+﻿using QuizTools.GeneralUtils;
+using QuizTools.Vseosvita.QuestionTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +15,19 @@ namespace QuizTools.Vseosvita
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter test ID: ");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string id = Console.ReadLine();
 
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter player bot nickname (empty for random): ");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string name = Console.ReadLine();
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
             Console.WriteLine("Enter number of bots to spawn: ");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             int count = int.Parse(Console.ReadLine());
 
             string[] nicknames = new string[count];
@@ -52,7 +53,7 @@ namespace QuizTools.Vseosvita
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter test ID: ");   
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string id = Console.ReadLine();
             VseosvitaUser user = new VseosvitaUser("123", id);
             if (user.JoinTest())

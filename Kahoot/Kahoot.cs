@@ -41,7 +41,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter kahoot link, pin, challenge or quiz id");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string? input = Console.ReadLine();
 
             try
@@ -63,7 +63,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter kahoot link, pin, challenge or quiz id");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string? input = Console.ReadLine();
             KahootGame quiz = null;
 
@@ -106,7 +106,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter game link, pin or challenge id");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string game = Console.ReadLine();
             if (game == null)
                 return;
@@ -114,7 +114,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter nickname");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string name = Console.ReadLine();
             if (name == null || name == "")
                 return;
@@ -128,7 +128,7 @@ namespace QuizTools.Kahoot
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
                     Console.WriteLine("Use async method (y/n)?");
                     Console.ResetColor();
-                    Console.Write("➤ ");
+                    ConsoleUtils.WriteArrow();
                     answer = Console.ReadLine().ToLower();
                 }
 
@@ -159,7 +159,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter game link, challenge id or pin");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string game = Console.ReadLine();
             if (game == null)
                 return;
@@ -176,7 +176,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter nickname of bots (empty for random), lenght should be between 2 and 47");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string nick = Console.ReadLine().Trim();
             if ((nick.Length < 2 || nick.Length > 47) && nick.Length != 0)
             {
@@ -202,7 +202,7 @@ namespace QuizTools.Kahoot
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.WriteLine("Use async method (y/n)?");
                 Console.ResetColor();
-                Console.Write("➤ ");
+                ConsoleUtils.WriteArrow();
                 answer = Console.ReadLine().ToLower();
             }
             if (answer == "n")
@@ -219,7 +219,7 @@ namespace QuizTools.Kahoot
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("Enter start pin");
             Console.ResetColor();
-            Console.Write("➤ ");
+            ConsoleUtils.WriteArrow();
             string startPinStr = Console.ReadLine();
             if (!int.TryParse(startPinStr, out int startPin) || startPin > KahootConstants.MAX_KAHOOT_PIN)
             {
@@ -232,7 +232,7 @@ namespace QuizTools.Kahoot
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.WriteLine("Use async method (y/n)?");
                 Console.ResetColor();
-                Console.Write("➤ ");
+                ConsoleUtils.WriteArrow();
                 answer = Console.ReadLine().ToLower();
             }
             KahootBruteForcer bruteForcer = new KahootBruteForcer(startPin);
