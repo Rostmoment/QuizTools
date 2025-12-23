@@ -37,6 +37,9 @@ namespace QuizTools.GeneralUtils
         }
         public static bool IsValidHex(string hex)
         {
+            if (hex.IsNullOrEmpty()) 
+                return false;
+
             if (hex[0] != '#')
                 hex = "#" + hex;
             try

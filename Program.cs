@@ -14,7 +14,7 @@ namespace QuizTools
 
         private static void Main(string[] args)
         {
-            Settings.Load();
+            Settings.Initialize();
             new Category("Kahoot").AddOption("Get Info", "Shows information about kahoot", Kahoot.Kahoot.GetGamenfo)
                 .AddOption("Get Answers", "Shows answers to Kahoot", Kahoot.Kahoot.GetAnswers)
                 .AddOption("Solve Kahoot", "Solves test on Kahoot", Kahoot.Kahoot.SolveKahoot)
@@ -25,6 +25,7 @@ namespace QuizTools
                 .AddOption("Spam With Bots", "Spam with bots to Vseosvita test", Vseosvita.Vseosvita.SpamWithBots);
 
             new Category("Settings").AddOption(new LogoGradientOption("Change Logo Gradient", "{0} --- {1}", Settings.SetLogoGradient))
+                .AddOption("Reset To Default", "", Settings.Reset)
                 .AddOption("Open Settings Folder", "", Settings.OpenFolder);
 
             new Category("Other").AddOption("About", "Shows information about program", About)
@@ -79,7 +80,7 @@ namespace QuizTools
         }
         private static void Banner()
         {
-            List<string> colors = ColorHelper.GetGradient(Settings.LogoGradientFrom, Settings.LogoGradientTo, 6);
+            List<string> colors = ColorHelper.GetGradient(Settings.Instance.LogoGradientFrom, Settings.Instance.LogoGradientTo, 6);
             Console.WriteLine("" +
                                 "░██████╗░██╗░░░██╗██╗███████╗      ████████╗░█████╗░░█████╗░██╗░░░░░░██████╗".ColorHex(colors[0]) + "\n" +
                                 "██╔═══██╗██║░░░██║██║╚════██║      ╚══██╔══╝██╔══██╗██╔══██╗██║░░░░░██╔════╝".ColorHex(colors[1]) + "\n" +
