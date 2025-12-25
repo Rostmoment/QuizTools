@@ -45,12 +45,12 @@ namespace QuizTools.Kahoot
         {
             if (HasBaseNickname)
             {
-                generatedNicknames = NicknameGenerator.GenerateNicknameWithZeroWidthSpace(baseNickname, KahootConstants.MAX_NICKNAME_LENGHT, challenge.MaxPlayers).ToList();
+                generatedNicknames = NicknameGenerator.GenerateNicknameWithZeroWidthSpace(baseNickname, KahootConstants.MAX_NICKNAME_LENGHT, challenge.MaxPlayers, x => !Kahoot.NicknameHasProfanity(x)).ToList();
                 Logger.WriteInfoLine($"Generated {generatedNicknames.Count} nicknames based on '{baseNickname}'");
                 return;
             }
 
-            generatedNicknames = NicknameGenerator.RandomNicknames(challenge.MaxPlayers).ToList();
+            generatedNicknames = NicknameGenerator.RandomNicknames(challenge.MaxPlayers, x => !Kahoot.NicknameHasProfanity(x)).ToList();
         }
         public async Task SpamAsync()
         {

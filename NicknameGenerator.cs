@@ -1,6 +1,7 @@
 ﻿using QuizTools.GeneralUtils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,10 @@ namespace QuizTools
 {
     class NicknameGenerator
     {
-        public static string[] GenerateNicknameWithZeroWidthSpace(string nickname, int maxLength, int count, bool includeOriginal = true)
+        public static string[] GenerateNicknameWithZeroWidthSpace(string nickname, int maxLength, int count, bool includeOriginal = true) =>
+            GenerateNicknameWithZeroWidthSpace(nickname, maxLength, count, (x) => true, includeOriginal);
+
+        public static string[] GenerateNicknameWithZeroWidthSpace(string nickname, int maxLength, int count, Func<string, bool> filter, bool includeOriginal = true)
         {
             if (nickname.Length > maxLength)
                 throw new ArgumentException("Nickname is longer than max length");
@@ -21,7 +25,7 @@ namespace QuizTools
             List<int[]> positions = MathFunctions.DivideIntoAddends(insertable, nickname.Length, true);
             HashSet<string> nicknames = new();
 
-            if (includeOriginal)
+            if (includeOriginal && filter(nickname))
                 nicknames.Add(nickname);
 
             foreach (int[] position in positions)
@@ -39,14 +43,17 @@ namespace QuizTools
                     newNickname.Append(nickname[j]);
                 }
 
-                nicknames.Add(newNickname.ToString());
+                string name = newNickname.ToString();
+                if (filter(name))
+                    nicknames.Add(name);
             }
 
             return nicknames.ToArray();
         }
 
 
-        public static string[] RandomNicknamesWithoutRepeats(int count)
+        public static string[] RandomNicknamesWithoutRepeats(int count) => RandomNicknamesWithoutRepeats(count, x => true);
+        public static string[] RandomNicknamesWithoutRepeats(int count, Func<string, bool> filter)
         {
             count = Math.Min(count, MaxNicknamesCount);
             if (count <= 0)
@@ -58,13 +65,16 @@ namespace QuizTools
             while (nicknamesSet.Count < count)
             {
                 string nickname = Program.RNG.ChoseRandom(allNicknames);
-                nicknamesSet.Add(nickname);
+                if (filter(nickname))
+                    nicknamesSet.Add(nickname);
+
                 allNicknames.Remove(nickname);
-                Logger.WriteInfoLine(nicknamesSet.Count);
             }
             return nicknamesSet.ToArray();
         }
-        public static string[] RandomNicknames(int count)
+
+        public static string[] RandomNicknames(int count) => RandomNicknames(count, x => true);
+        public static string[] RandomNicknames(int count, Func<string, bool> filter)
         {
             count = Math.Min(count, MaxNicknamesCount);
             if (count <= 0)
@@ -72,7 +82,13 @@ namespace QuizTools
 
             string[] nicknames = new string[count];
             for (int i = 0; i < count; i++)
-                nicknames[i] = RandomNickname();
+            {
+                string nickname = RandomNickname();
+                if (filter(nickname))
+                    nicknames[i] = nickname;
+                else
+                    i--;
+            }
             return nicknames;
         }
         public static string RandomNickname()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace QuizTools.Kahoot
 {
@@ -15,6 +16,7 @@ namespace QuizTools.Kahoot
         public const string URL_JOIN_KAHOOT_BY_API = "https://kahoot.it/rest/challenges/{0}/join/?nickname={1}";
         public const string URL_PRIVATE_KAHOOT = "https://play.kahoot.it/reserve/session/{0}";
         public const string URL_ANSWERS = "https://kahoot.it/rest/challenges/{0}/answers";
+        public const string URL_PROFANITY_CHECK = "https://apis.kahoot.it/profanities/nickname/{0}";
 
         public const string URL_KAHOOT_DETAILS = "https://create.kahoot.it/details/{0}?drawer=";
         public const string URL_USER_PROFILE = "https://create.kahoot.it/profiles/{0}";

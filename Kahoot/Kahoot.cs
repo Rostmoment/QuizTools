@@ -28,8 +28,7 @@ namespace QuizTools.Kahoot
                     $"\nPin: {challenge.Pin.MakeHyperlink(challenge.PinJSONLink)}" +
                     $"\nStart: {challenge.StartTime}" +
                     $"\nEnd: {challenge.EndTime}" +
-                    $"\nMax players: {challenge.MaxPlayers}" +
-                    $"\nPlayers ({players.Length}): {players.ToSeparatedString(", ")}" +
+                    $"\nPlayers ({players.Length}/{challenge.MaxPlayers}): {players.ToSeparatedString(", ")}" +
                     $"\nHost: {challenge.Host.ToString().MakeHyperlink(challenge.Host.Link)}";
             }
 
@@ -286,6 +285,20 @@ namespace QuizTools.Kahoot
             using HttpRequestMessage request = new(HttpMethod.Get, string.Format(KahootConstants.URL_PRIVATE_KAHOOT, id));
             HttpResponseMessage response = httpClient.Send(request);
             return response.StatusCode == System.Net.HttpStatusCode.OK;
+        }
+        public static bool NicknameHasProfanity(string name)
+        {
+            using HttpClient httpClient = new();
+            using HttpRequestMessage request = new(HttpMethod.Get, string.Format(KahootConstants.URL_PROFANITY_CHECK, name));
+            HttpResponseMessage response = httpClient.Send(request);
+            return response.Content.ReadAsStringAsync().Result != "[]";
+        }
+        public static async Task<bool> NicknameHasProfanityAsync(string name)
+        {
+            using HttpClient httpClient = new();
+            using HttpRequestMessage request = new(HttpMethod.Get, string.Format(KahootConstants.URL_PROFANITY_CHECK, name));
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            return await response.Content.ReadAsStringAsync() != "[]";
         }
     }
 }
